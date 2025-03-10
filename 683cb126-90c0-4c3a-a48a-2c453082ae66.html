@@ -1,0 +1,302 @@
+﻿<!DOCTYPE html>
+<html>
+	<head>
+		<title>Eye of the Beholder III: Assault on Myth Drannor</title>
+		<meta name="viewport" content="width=device-width, initial-scale=0.55">
+		<style>
+body {
+  background: #24282f;                                /* main background color in case of no image */
+  font-family: 'Arial';                               /* font arial which should be readable */
+  Height:100%;                                        /* set width to 100% also needed for background */
+  margin:0px;                                         /* hide any margins */
+  background-size: cover;                             /* size background image without distortion along width and height */
+  background-repeat: no-repeat;                       /* no background repeat */
+  Background-attachment:fixed;                        /* needed to make background image behave properly */
+  overflow-y:hidden;                                  /* no normal overflow, only our containers (details & description) will overflow or have scrollbar * /
+}
+ 
+html {
+  height:100%;                                        /* need to set this to 100% to make the background behave propertly */
+}
+
+.title h2 {
+  padding-left: 25px;                                 /* left padding */
+  color: #ccc;                                        /* text color */
+  margin: 0;                                          /* no margins */
+  background-color: black;                            /* black background */
+  vertical-align: middle;                             /* align vertical middle */
+}
+
+.title img {
+	vertical-align: middle;                           /* images in title aligned vertical middle */
+}
+
+.title {
+	width: 100%;                                      /* title container width 100% */
+	grid-column: 1 / span 3;                          /* column 1 but spans 3 */
+    grid-row: 1;                                      /* row 1 */
+
+}
+.cards {                                              /* empty not used here */
+}
+
+.card {
+	display: grid;                                    /* container which is the grid */
+	grid-template-columns: min-content;               /* size columns to minimum content */
+	grid-template-rows: min-content min-content;      /* size rows to minimum content */
+	height: 100vh;                                    /* 100% viewport height */
+}
+
+.detailstitle{
+  grid-column: 1;                                     /* 1st column */
+  grid-row: 2;                                        /* 2nd row */
+  width: 350px;                                       /* fixed width set to same size as details */
+  padding-left: 10px;                                 /* some padding left */
+  padding-right: 10px;                                /* some padding right */
+}
+
+.details {
+  padding-left: 10px;                                 /* some padding left */
+  padding-right: 10px;                                /* some padding right */
+  color: #ccc;
+  grid-column: 1;                                      /* 1st column */
+  grid-row: 3;                                         /* 3rd row of grid */
+  width: 350px;                                        /* fixed width of details */
+  overflow-y: auto;                                     /* add vertical scrollbar if needed */
+  overflow-x:hidden;                                   /* don't overflow on x axis (no horz scrollbar) */
+ }
+ 
+.detailstitle h3,
+.descriptiontitle h3 {
+	border-bottom: 1px solid #ccc;                     /* titles of description details should have line under it */
+	padding: 5px;                                      /* add some padding */
+	color: #ccc;                                       /* text color of the titles */
+}
+
+.detailstable th, td {
+  border: 0px;                                         /* no borders on td, th elements */
+  color: #ccc;                                         /* details table text color */
+}
+
+.detailstable td {
+  text-align: left;                                    /* align text left */
+  vertical-align: top;                                 /* align top */
+}
+
+.detailstable {
+  width: 100%;                                         /* set to full width of details */
+  padding: 5px;                                        /* add some padding */
+}
+
+.details img {
+	max-width: 100%;                                   /* make sure images don't overflow in width on details */
+}
+
+.descriptiontitle {
+	grid-column: 2;                                    /* column 2 of grid */
+	grid-row: 2;                                       /* row 2 of grid */
+	padding-left: 10px;                                /* some padding left */
+	padding-right: 10px;                               /* some padding right */
+}
+
+
+.description {
+	color: #ccc;                                       /* text color */
+	grid-column: 2;                                    /* 2nd column of grid */
+	grid-row: 3;                                       /* 3rd row of grid */
+	overflow-y: auto;                                  /* overflow-y automatic (for adding scrollbar) */
+	overflow-x:hidden;                                 /* prevent horizontal scrollbar */
+	padding-left: 10px;                                /* some padding left */
+	padding-right: 10px;                               /* some padding right */
+}
+
+.description img {
+	max-width: 100%;                                   /* make sure images don't overflow in width to prevent scrollbars */
+}
+
+.MenuButton {
+  border: none;                                        /* Remove borders */
+  outline: none;                                       /* Remove outline */
+  background-color: #888;                              /* Set a background color */
+  color: #000;                                         /* Text color */
+  padding: 5px;                                        /* Some padding */
+  border-radius: 4px;                                  /* Rounded corners, border */
+  font-size: 20px;                                     /* Increase font size */
+  cursor:pointer;                                         /* Add a mouse pointer on hover */
+  margin-right: 20px;                                  /* to have some space on right side before next element */
+  -webkit-appearance: button;
+  -moz-appearance: button;
+  appearance: button;
+  text-decoration: none;
+}
+
+.MenuButton:hover {
+  background-color: #777;                              /* Add a dark-grey background on hover */
+  color: #CCC;                                         /* Text color */
+}
+
+a {
+ text-decoration: none;                                /* no text underline in links */
+}
+a:link {
+  color: #CCC;                                         /* unvisited link color */
+}
+a:visited {
+  color: #CCC;                                         /* visited link color */
+}
+a:hover {
+  color: #EEE;                                         /* mouse over link color */
+  text-decoration: underline;                          /* add text underline in links when mouse over */
+}
+a:active {
+  color: #CCC;                                         /* selected link color */
+}
+
+                                                       /* scrollbars W3C standard that is currently Firefox-only */
+* {
+  scrollbar-width: thin;                               /* small width */
+  scrollbar-color: #888 transparent;                   /* trackbar color + transparant background */
+}
+
+                                                       /* scrollbars on Chrome/Edge/Safari */
+*::-webkit-scrollbar {
+  width: 12px;                                         /* small width */
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;                             /* background color track */
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #AAA;                              /* background */
+  border-radius: 20px;                                 /* rounded corner, border */
+  border: 3px solid #888;                              /* add the border */
+}
+
+		</style>
+	</head>
+	<body style="background-image: linear-gradient(to bottom, rgba(0,0,0,0.52), rgba(0,0,0,0.73)), url('683cb126-90c0-4c3a-a48a-2c453082ae66/12afe070-6875-4b52-8a62-607c590e3fde.png');">
+		<div class="cards">
+			<div class="card">
+				<div class="title">
+					<h2><button onclick="window.history.back()" class="MenuButton">Back</button><img Height="48" class="lozad" data-src="683cb126-90c0-4c3a-a48a-2c453082ae66/6a10872d-e17f-48e9-be4d-2a8760b567b0.png"/> Eye of the Beholder III: Assault on Myth Drannor</h2>
+				</div>
+				<div class="detailstitle">
+				<H3>Detalhes</H3>
+				</div>
+				<div class="details">
+					<div style="overflow: auto;">
+						<TABLE class="detailstable">
+							<col style="width:50%" />
+							<col style="width:50%" />
+							<TR>
+								<TD style="text-align:center" Colspan="2"><img Height="175" class="lozad" data-src="683cb126-90c0-4c3a-a48a-2c453082ae66/8914ec3d-a1f5-4a93-b0f0-07ba60bb52d5.png"/></TD>
+							</TR>
+							<TR>
+								<TD>Tempo de jogo</TD>
+								<TD>N&#227;o Jogado</TD>
+							</TR>
+							<TR>
+								<TD>Última Atividade</TD>
+								<TD><a href="#quicklink-Nunca">Nunca</a> </TD>
+							</TR>
+							<TR>
+								<TD>Adicionado</TD>
+								<TD><a href="#quicklink-18/04/2024">18/04/2024</a> 21:08:56</TD>
+							</TR>
+							<TR>
+								<TD>Modificado</TD>
+								<TD><a href="#quicklink-10/03/2025">10/03/2025</a> 0:32:53</TD>
+							</TR>
+							<TR>
+								<TD>Status de Conclusão</TD>
+								<TD><a href="#quicklink-Not Played">Not Played</a></TD>
+							</TR>
+							<TR>
+								<TD>Biblioteca</TD>
+								<TD><a href="#quicklink-Gog">Gog</a></TD>
+							</TR>
+							<TR>
+								<TD>Fonte</TD>
+								<TD><a href="default%20list_source_ascendente_name_ascendente.html#quicklink-GOG">GOG</a></TD>
+							</TR>
+							<TR>
+								<TD>Plataforma</TD>
+								<TD><a href="default%20list_platform_ascendente_name_ascendente.html#quicklink-PC (Windows)">PC (Windows)</a><br/></TD>
+							</TR>
+							<TR>
+								<TD>Data de Lançamento</TD>
+								<TD><a href="#quicklink-1993">1993</a> </TD>
+							</TR>
+							<TR>
+								<TD>Pontuação da Comunidade</TD>
+								<TD><a href="default%20list%20combobox%20quicklinks_communityscore_ascendente_communityscore_ascendente.html#quicklink-70">70</a></TD>
+							</TR>
+							<TR>
+								<TD>Avaliação da crítica</TD>
+								<TD><a href="default%20list%20combobox%20quicklinks_criticscore_descendente_name_ascendente.html#quicklink-"></a></TD>
+							</TR>
+							<TR>
+								<TD>Pontuação do Usuário</TD>
+								<TD><a href="#quicklink-"></a></TD>
+							</TR>
+							<TR>
+								<TD>Gênero</TD>
+								<TD><a href="default%20list%20combobox%20quicklinks_genre_ascendente_name_ascendente.html#quicklink-RPG">RPG</a><br/></TD>
+							</TR>
+							<TR>
+								<TD>Desenvolvedor</TD>
+								<TD><a href="#quicklink-Strategic Simulations Inc.">Strategic Simulations Inc.</a><br/></TD>
+							</TR>
+							<TR>
+								<TD>Editor</TD>
+								<TD><a href="#quicklink-GOG.com">GOG.com</a><br/><a href="#quicklink-SNEG">SNEG</a><br/><a href="#quicklink-Strategic Simulations Inc.">Strategic Simulations Inc.</a><br/></TD>
+							</TR>
+							<TR>
+								<TD>Funções</TD>
+								<TD><a href="#quicklink-Cloud saves">Cloud saves</a><br/><a href="#quicklink-Single Player">Single Player</a><br/></TD>
+							</TR>
+							<TR>
+								<TD>Links</TD>
+								<TD><a href="https://www.gog.com/forum/forgotten_realms_collection" target="_blank">Fórum</a><br/><a href="https://www.gog.com/en/game/eye_of_the_beholder_iii_assault_on_myth_drannor" target="_blank">Página na loja</a><br/><a href="http://pcgamingwiki.com/w/index.php?search=Eye of the Beholder III: Assault on Myth Drannor" target="_blank">PCGamingWiki</a><br/></TD>
+							</TR>
+							<TR>
+								<TD>Tag</TD>
+								<TD><a href="#quicklink-[EMT] Video Micro missing">[EMT] Video Micro missing</a><br/><a href="#quicklink-[EMT] Video missing">[EMT] Video missing</a><br/><a href="#quicklink-[HLTB] 05 a 10 horas">[HLTB] 05 a 10 horas</a><br/></TD>
+							</TR>
+						</TABLE>
+					</div>
+				</div>
+				<div class="descriptiontitle">
+					<H3>Descri&#231;&#227;o</H3>
+				</div>
+				<div class="description">
+					The Forgotten Realms world of Dungeons & Dragons has been home to many a hero and imagination since its publication, producing adventures and stories to be retold and enjoyed for years to come. The Forgotten Realms Archive - Collection One allows you to journey through one such set of adventures: the Eye of the Beholder trilogy, a set of first-person, real-time role-playing games. 
+<br><br><br><br>
+
+<img src="http://items.gog.com/hasbeen/fr23423445eoba.jpg" style="margin: 5px 15px 0 0; float: left; width: 220px">
+<span style="text-transform: uppercase; font-weight: bold; display: block;">Eye of the Beholder</span>
+A new evil is plaguing the city of Waterdeep, stalking the streets and preying on its citizens. Though initially thought to come from afar, this great evil, known only as Xanathar, instead resides within Waterdeep and, if not stopped, threatens to overwhelm the city. The Lords of Waterdeep believe that the evil lurks in the sewers below and have commissioned a party of adventurers to investigate and foil this nefarious plot. Granted full rights of marque and ownership of any treasure, artifacts or valuables you find on your quest, you must venture into the chasms, discover the nature of this evil and destroy it by any means necessary. 
+<span style="display: block; height: 20px"> </span>
+
+<img src="http://items.gog.com/hasbeen/fr56283642eobiia.jpg" style="margin: 5px 15px 0 0; float: left; width: 220px">
+<span style="text-transform: uppercase; font-weight: bold; display: block;">Eye of the Beholder II: The Legend of Darkmoon</span>
+Following your quest in the sewers beneath, you and your party are recovering with Waterdeep’s finest healers, when a letter arrives from Khelben Blackstaff, mystic advisor to the Lords of Waterdeep. Trouble is brewing in the Northern and Western regions, and he has tasked you with exploring the land and investigating these incidents. Although nothing has been confirmed, renowned but troublesome archaeologist, Wently Kelso believes the disturbances are related to an evil uprising and the presence of a powerful ancient artefact. These troubles could, of course, simply be the work of unruly bandits, but since Kelso’s previous findings in the sewers of Waterdeep proved true,  one would be wise not to easily dismiss his opinion on the matter. Therefore, you should exercise greater care and vigilance as you begin your next adventure. 
+<span style="display: block; height: 20px"> </span>
+
+<img src="http://items.gog.com/hasbeen/fr08267308eobiiia.jpg" style="margin: 5px 15px 0 0; float: left; width: 220px">
+<span style="text-transform: uppercase; font-weight: bold; display: block;">Eye of the Beholder III: Assault on Myth Drannor</span>
+Having rid the sewers of Waterdeep and the dreaded Temple Darkmoon of the evil forces within, you and your companions are surely deserving of a strong drink, good food and a warm fire. And so, your first port of call is to the nearest tavern, where you slop ale all over yourself and engage in jovial antics as you regale your adventures to your captivated listeners and admirers. However, in the midst of your retelling, the tavern door is thrust open by a hooded figure, whose eyes scan the crowd before locking on you and your party. Approaching you, he quickly introduces himself and explains his reasons for disturbing the festivities; his master wishes you to free the ruined city of Myth Drannor from the clutches of a Lich and restore it to its former glory. Looks like your adventures aren’t over just yet…
+<br><br><br><br>
+
+With an original story set in the Forgotten Realms universe, the Eye of the Beholder trilogy is based on the Advanced Dungeon & Dragons 2nd Edition’s game rules. Bringing the immersion, wonder and epicness of a D&D campaign to the PC, the Eye of the Beholder is a genre-defining and beloved series for RPG and Dungeons & Dragons fans alike.
+				</div>
+			</div>
+		</div>
+		<script src="https://cdn.jsdelivr.net/npm/lozad/dist/lozad.min.js"></script>
+		<script>
+			const observer = lozad(); // lazy loads elements with default selector as '.lozad'
+			observer.observe();
+		</script>
+	</body>	
+</html>

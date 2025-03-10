@@ -1,0 +1,292 @@
+﻿<!DOCTYPE html>
+<html>
+	<head>
+		<title>Call of Juarez</title>
+		<meta name="viewport" content="width=device-width, initial-scale=0.55">
+		<style>
+body {
+  background: #24282f;                                /* main background color in case of no image */
+  font-family: 'Arial';                               /* font arial which should be readable */
+  Height:100%;                                        /* set width to 100% also needed for background */
+  margin:0px;                                         /* hide any margins */
+  background-size: cover;                             /* size background image without distortion along width and height */
+  background-repeat: no-repeat;                       /* no background repeat */
+  Background-attachment:fixed;                        /* needed to make background image behave properly */
+  overflow-y:hidden;                                  /* no normal overflow, only our containers (details & description) will overflow or have scrollbar * /
+}
+ 
+html {
+  height:100%;                                        /* need to set this to 100% to make the background behave propertly */
+}
+
+.title h2 {
+  padding-left: 25px;                                 /* left padding */
+  color: #ccc;                                        /* text color */
+  margin: 0;                                          /* no margins */
+  background-color: black;                            /* black background */
+  vertical-align: middle;                             /* align vertical middle */
+}
+
+.title img {
+	vertical-align: middle;                           /* images in title aligned vertical middle */
+}
+
+.title {
+	width: 100%;                                      /* title container width 100% */
+	grid-column: 1 / span 3;                          /* column 1 but spans 3 */
+    grid-row: 1;                                      /* row 1 */
+
+}
+.cards {                                              /* empty not used here */
+}
+
+.card {
+	display: grid;                                    /* container which is the grid */
+	grid-template-columns: min-content;               /* size columns to minimum content */
+	grid-template-rows: min-content min-content;      /* size rows to minimum content */
+	height: 100vh;                                    /* 100% viewport height */
+}
+
+.detailstitle{
+  grid-column: 1;                                     /* 1st column */
+  grid-row: 2;                                        /* 2nd row */
+  width: 350px;                                       /* fixed width set to same size as details */
+  padding-left: 10px;                                 /* some padding left */
+  padding-right: 10px;                                /* some padding right */
+}
+
+.details {
+  padding-left: 10px;                                 /* some padding left */
+  padding-right: 10px;                                /* some padding right */
+  color: #ccc;
+  grid-column: 1;                                      /* 1st column */
+  grid-row: 3;                                         /* 3rd row of grid */
+  width: 350px;                                        /* fixed width of details */
+  overflow-y: auto;                                     /* add vertical scrollbar if needed */
+  overflow-x:hidden;                                   /* don't overflow on x axis (no horz scrollbar) */
+ }
+ 
+.detailstitle h3,
+.descriptiontitle h3 {
+	border-bottom: 1px solid #ccc;                     /* titles of description details should have line under it */
+	padding: 5px;                                      /* add some padding */
+	color: #ccc;                                       /* text color of the titles */
+}
+
+.detailstable th, td {
+  border: 0px;                                         /* no borders on td, th elements */
+  color: #ccc;                                         /* details table text color */
+}
+
+.detailstable td {
+  text-align: left;                                    /* align text left */
+  vertical-align: top;                                 /* align top */
+}
+
+.detailstable {
+  width: 100%;                                         /* set to full width of details */
+  padding: 5px;                                        /* add some padding */
+}
+
+.details img {
+	max-width: 100%;                                   /* make sure images don't overflow in width on details */
+}
+
+.descriptiontitle {
+	grid-column: 2;                                    /* column 2 of grid */
+	grid-row: 2;                                       /* row 2 of grid */
+	padding-left: 10px;                                /* some padding left */
+	padding-right: 10px;                               /* some padding right */
+}
+
+
+.description {
+	color: #ccc;                                       /* text color */
+	grid-column: 2;                                    /* 2nd column of grid */
+	grid-row: 3;                                       /* 3rd row of grid */
+	overflow-y: auto;                                  /* overflow-y automatic (for adding scrollbar) */
+	overflow-x:hidden;                                 /* prevent horizontal scrollbar */
+	padding-left: 10px;                                /* some padding left */
+	padding-right: 10px;                               /* some padding right */
+}
+
+.description img {
+	max-width: 100%;                                   /* make sure images don't overflow in width to prevent scrollbars */
+}
+
+.MenuButton {
+  border: none;                                        /* Remove borders */
+  outline: none;                                       /* Remove outline */
+  background-color: #888;                              /* Set a background color */
+  color: #000;                                         /* Text color */
+  padding: 5px;                                        /* Some padding */
+  border-radius: 4px;                                  /* Rounded corners, border */
+  font-size: 20px;                                     /* Increase font size */
+  cursor:pointer;                                         /* Add a mouse pointer on hover */
+  margin-right: 20px;                                  /* to have some space on right side before next element */
+  -webkit-appearance: button;
+  -moz-appearance: button;
+  appearance: button;
+  text-decoration: none;
+}
+
+.MenuButton:hover {
+  background-color: #777;                              /* Add a dark-grey background on hover */
+  color: #CCC;                                         /* Text color */
+}
+
+a {
+ text-decoration: none;                                /* no text underline in links */
+}
+a:link {
+  color: #CCC;                                         /* unvisited link color */
+}
+a:visited {
+  color: #CCC;                                         /* visited link color */
+}
+a:hover {
+  color: #EEE;                                         /* mouse over link color */
+  text-decoration: underline;                          /* add text underline in links when mouse over */
+}
+a:active {
+  color: #CCC;                                         /* selected link color */
+}
+
+                                                       /* scrollbars W3C standard that is currently Firefox-only */
+* {
+  scrollbar-width: thin;                               /* small width */
+  scrollbar-color: #888 transparent;                   /* trackbar color + transparant background */
+}
+
+                                                       /* scrollbars on Chrome/Edge/Safari */
+*::-webkit-scrollbar {
+  width: 12px;                                         /* small width */
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;                             /* background color track */
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #AAA;                              /* background */
+  border-radius: 20px;                                 /* rounded corner, border */
+  border: 3px solid #888;                              /* add the border */
+}
+
+		</style>
+	</head>
+	<body style="background-image: linear-gradient(to bottom, rgba(0,0,0,0.52), rgba(0,0,0,0.73)), url('c78cfec5-72c7-4a6c-8295-bfc0139d1a21/7ea5869a-45b5-411f-82da-6436b789cef7.png');">
+		<div class="cards">
+			<div class="card">
+				<div class="title">
+					<h2><button onclick="window.history.back()" class="MenuButton">Back</button><img Height="48" class="lozad" data-src="c78cfec5-72c7-4a6c-8295-bfc0139d1a21/f661ca6a-89f0-440b-9e64-8fae2e6e714a.ico"/> Call of Juarez</h2>
+				</div>
+				<div class="detailstitle">
+				<H3>Detalhes</H3>
+				</div>
+				<div class="details">
+					<div style="overflow: auto;">
+						<TABLE class="detailstable">
+							<col style="width:50%" />
+							<col style="width:50%" />
+							<TR>
+								<TD style="text-align:center" Colspan="2"><img Height="175" class="lozad" data-src="c78cfec5-72c7-4a6c-8295-bfc0139d1a21/1cbcb757-8b06-439f-835f-7370c5d68681.png"/></TD>
+							</TR>
+							<TR>
+								<TD>Tempo de jogo</TD>
+								<TD>N&#227;o Jogado</TD>
+							</TR>
+							<TR>
+								<TD>Última Atividade</TD>
+								<TD><a href="#quicklink-Nunca">Nunca</a> </TD>
+							</TR>
+							<TR>
+								<TD>Adicionado</TD>
+								<TD><a href="#quicklink-15/07/2024">15/07/2024</a> 13:16:44</TD>
+							</TR>
+							<TR>
+								<TD>Modificado</TD>
+								<TD><a href="#quicklink-10/03/2025">10/03/2025</a> 1:37:03</TD>
+							</TR>
+							<TR>
+								<TD>Status de Conclusão</TD>
+								<TD><a href="#quicklink-Not Played">Not Played</a></TD>
+							</TR>
+							<TR>
+								<TD>Biblioteca</TD>
+								<TD><a href="#quicklink-Gog">Gog</a></TD>
+							</TR>
+							<TR>
+								<TD>Fonte</TD>
+								<TD><a href="default%20list_source_ascendente_name_ascendente.html#quicklink-GOG">GOG</a></TD>
+							</TR>
+							<TR>
+								<TD>Plataforma</TD>
+								<TD><a href="default%20list_platform_ascendente_name_ascendente.html#quicklink-PC (Windows)">PC (Windows)</a><br/></TD>
+							</TR>
+							<TR>
+								<TD>Data de Lançamento</TD>
+								<TD><a href="#quicklink-05/09/2006">05/09/2006</a> </TD>
+							</TR>
+							<TR>
+								<TD>Pontuação da Comunidade</TD>
+								<TD><a href="default%20list%20combobox%20quicklinks_communityscore_ascendente_communityscore_ascendente.html#quicklink-74">74</a></TD>
+							</TR>
+							<TR>
+								<TD>Avaliação da crítica</TD>
+								<TD><a href="default%20list%20combobox%20quicklinks_criticscore_descendente_name_ascendente.html#quicklink-72">72</a></TD>
+							</TR>
+							<TR>
+								<TD>Pontuação do Usuário</TD>
+								<TD><a href="#quicklink-"></a></TD>
+							</TR>
+							<TR>
+								<TD>Gênero</TD>
+								<TD><a href="default%20list%20combobox%20quicklinks_genre_ascendente_name_ascendente.html#quicklink-First-person shooter">First-person shooter</a><br/></TD>
+							</TR>
+							<TR>
+								<TD>Desenvolvedor</TD>
+								<TD><a href="#quicklink-Techland">Techland</a><br/></TD>
+							</TR>
+							<TR>
+								<TD>Editor</TD>
+								<TD><a href="#quicklink-AU">AU</a><br/><a href="#quicklink-EU">EU</a><br/><a href="#quicklink-Microsoft Windows'Xbox 360">Microsoft Windows'Xbox 360</a><br/><a href="#quicklink-NA">NA</a><br/><a href="#quicklink-Ubisoft">Ubisoft</a><br/></TD>
+							</TR>
+							<TR>
+								<TD>Funções</TD>
+								<TD><a href="#quicklink-Multiplayer">Multiplayer</a><br/><a href="#quicklink-Single Player">Single Player</a><br/></TD>
+							</TR>
+							<TR>
+								<TD>Links</TD>
+								<TD><a href="https://en.wikipedia.org/wiki/Call_of_Juarez_(video_game)" target="_blank">Wikipedia</a><br/></TD>
+							</TR>
+							<TR>
+								<TD>Tag</TD>
+								<TD><a href="#quicklink-[EMT] Video Micro missing">[EMT] Video Micro missing</a><br/></TD>
+							</TR>
+						</TABLE>
+					</div>
+				</div>
+				<div class="descriptiontitle">
+					<H3>Descri&#231;&#227;o</H3>
+				</div>
+				<div class="description">
+					<p><i><b>Call of Juarez</b></i> is a 2006 <a href="https://en.wikipedia.org/wiki/Western_(genre)">Western</a>-themed <a href="https://en.wikipedia.org/wiki/First-person_shooter">first-person shooter</a> for <a href="https://en.wikipedia.org/wiki/Microsoft_Windows">Windows</a> and <a href="https://en.wikipedia.org/wiki/Xbox_360">Xbox 360</a>. <a href="https://en.wikipedia.org/wiki/Video_game_developer">Developed</a> by <a href="https://en.wikipedia.org/wiki/Techland">Techland</a>, the Windows version was <a href="https://en.wikipedia.org/wiki/Video_game_publisher">published</a> in Europe by <a href="https://en.wikipedia.org/wiki/Focus_Home_Interactive">Focus Home Interactive</a> in September 2006, in Australia by <a href="https://en.wikipedia.org/wiki/N3V_Games">Auran Development</a> in October 2006, and in North America by <a href="https://en.wikipedia.org/wiki/Ubisoft">Ubisoft</a> in June 2007. The Xbox 360 version was ported by Techland and published worldwide by Ubisoft in June 2007. In March 2011, it was made available on <a href="https://en.wikipedia.org/wiki/Xbox_network">Xbox Live</a>, and in November 2018, it was released on <a href="https://en.wikipedia.org/wiki/GOG.com">GOG.com</a>. It is the first game in the <i><a href="https://en.wikipedia.org/wiki/Call_of_Juarez">Call of Juarez</a></i> series, which would go on to include three additional titles; <i><a href="https://en.wikipedia.org/wiki/Call_of_Juarez:_Bound_in_Blood">Call of Juarez: Bound in Blood</a></i> (a prequel to the first game), <i><a href="https://en.wikipedia.org/wiki/Call_of_Juarez:_The_Cartel">Call of Juarez: The Cartel</a></i> (set in the modern-day), and <i><a href="https://en.wikipedia.org/wiki/Call_of_Juarez:_Gunslinger">Call of Juarez: Gunslinger</a></i> (returns the series to the Western setting).</p>
+
+<p>The game tells the story of Billy 'Candle', a young <a href="https://en.wikipedia.org/wiki/Ranch_hand">ranch hand</a> and fortune-seeker, and Ray McCall, a former <a href="https://en.wikipedia.org/wiki/Gunfighter">gunslinger</a> turned <a href="https://en.wikipedia.org/wiki/Preacher">preacher</a>. After two years in <a href="https://en.wikipedia.org/wiki/Ciudad_Juárez">Juarez</a> unsuccessfully looking for the mysterious "Gold of Juarez", Billy returns to his hometown of Hope, <a href="https://en.wikipedia.org/wiki/Texas">Texas</a>, near the <a href="https://en.wikipedia.org/wiki/Mexico–United_States_border">Mexican border</a>. However, when he arrives at his farm, he finds his mother and stepfather have been murdered, and "Call of Juarez" written on a barn in their blood. Mistakenly believing that Billy is the killer, Ray (his step-uncle) abandons his role as the town's preacher and sets out to avenge their deaths by killing Billy, as Billy himself tries to find out who actually committed the murders, and why.</p>
+
+<p>Originally called <i>Lawman</i>, <i>Call of Juarez</i> was initially conceived as a reaction to <a href="https://en.wikipedia.org/wiki/World_War_II">World War II</a> and <a href="https://en.wikipedia.org/wiki/Science_fiction">science fiction</a> games dominating the first-person shooter genre. The <a href="https://en.wikipedia.org/wiki/Video_game_design">designers</a> drew inspiration from a range of Western-themed films, TV shows, and literature, as well as some real-life stories and figures. The game was built using Techland's in-house <a href="https://en.wikipedia.org/wiki/Game_engine">game engine</a>, the <a href="https://en.wikipedia.org/wiki/Chrome_Engine">Chrome Engine</a>. For the subsequent Xbox 360 release, numerous graphical improvements were made, and some <a href="https://en.wikipedia.org/wiki/Gameplay">gameplay</a> elements were changed, reducing the amount of stealth in Billy's levels. The North American PC release version incorporated many of these graphical and gameplay changes and was one of the first PC games optimized for <a href="https://en.wikipedia.org/wiki/Windows_Vista">Windows Vista</a> and <a href="https://en.wikipedia.org/wiki/DirectX#DirectX_10">DirectX 10</a>. Techland also released a <a href="https://en.wikipedia.org/wiki/Patch_(computing)">patch</a> allowing for those who owned the original DirectX9 version of the game to upgrade to the DirectX10 version.</p>
+
+<p><i>Call of Juarez</i> received mixed reviews, with most critics praising Ray's levels and the general shooting <a href="https://en.wikipedia.org/wiki/Game_mechanics">mechanics</a>, but finding Billy's levels significantly inferior, especially the <a href="https://en.wikipedia.org/wiki/Platform_game">platforming</a> sections and the implementation of the whip. The enemy <a href="https://en.wikipedia.org/wiki/Artificial_intelligence_in_video_games">AI</a> was also criticised. On the other hand, many critics were impressed with how the game recreated an authentic Western tone, and <a href="https://en.wikipedia.org/wiki/Marc_Alaimo">Marc Alaimo</a>'s <a href="https://en.wikipedia.org/wiki/Voice_acting">voice acting</a> as Ray was generally lauded. Although the game did not sell very well in North America, it fared better in Europe, with Techland citing it as "putting us on the map."</p>
+
+
+				</div>
+			</div>
+		</div>
+		<script src="https://cdn.jsdelivr.net/npm/lozad/dist/lozad.min.js"></script>
+		<script>
+			const observer = lozad(); // lazy loads elements with default selector as '.lozad'
+			observer.observe();
+		</script>
+	</body>	
+</html>

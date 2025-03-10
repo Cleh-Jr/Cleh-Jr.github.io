@@ -1,0 +1,292 @@
+﻿<!DOCTYPE html>
+<html>
+	<head>
+		<title>Red Dead Redemption: Game of the Year Edition</title>
+		<meta name="viewport" content="width=device-width, initial-scale=0.55">
+		<style>
+body {
+  background: #24282f;                                /* main background color in case of no image */
+  font-family: 'Arial';                               /* font arial which should be readable */
+  Height:100%;                                        /* set width to 100% also needed for background */
+  margin:0px;                                         /* hide any margins */
+  background-size: cover;                             /* size background image without distortion along width and height */
+  background-repeat: no-repeat;                       /* no background repeat */
+  Background-attachment:fixed;                        /* needed to make background image behave properly */
+  overflow-y:hidden;                                  /* no normal overflow, only our containers (details & description) will overflow or have scrollbar * /
+}
+ 
+html {
+  height:100%;                                        /* need to set this to 100% to make the background behave propertly */
+}
+
+.title h2 {
+  padding-left: 25px;                                 /* left padding */
+  color: #ccc;                                        /* text color */
+  margin: 0;                                          /* no margins */
+  background-color: black;                            /* black background */
+  vertical-align: middle;                             /* align vertical middle */
+}
+
+.title img {
+	vertical-align: middle;                           /* images in title aligned vertical middle */
+}
+
+.title {
+	width: 100%;                                      /* title container width 100% */
+	grid-column: 1 / span 3;                          /* column 1 but spans 3 */
+    grid-row: 1;                                      /* row 1 */
+
+}
+.cards {                                              /* empty not used here */
+}
+
+.card {
+	display: grid;                                    /* container which is the grid */
+	grid-template-columns: min-content;               /* size columns to minimum content */
+	grid-template-rows: min-content min-content;      /* size rows to minimum content */
+	height: 100vh;                                    /* 100% viewport height */
+}
+
+.detailstitle{
+  grid-column: 1;                                     /* 1st column */
+  grid-row: 2;                                        /* 2nd row */
+  width: 350px;                                       /* fixed width set to same size as details */
+  padding-left: 10px;                                 /* some padding left */
+  padding-right: 10px;                                /* some padding right */
+}
+
+.details {
+  padding-left: 10px;                                 /* some padding left */
+  padding-right: 10px;                                /* some padding right */
+  color: #ccc;
+  grid-column: 1;                                      /* 1st column */
+  grid-row: 3;                                         /* 3rd row of grid */
+  width: 350px;                                        /* fixed width of details */
+  overflow-y: auto;                                     /* add vertical scrollbar if needed */
+  overflow-x:hidden;                                   /* don't overflow on x axis (no horz scrollbar) */
+ }
+ 
+.detailstitle h3,
+.descriptiontitle h3 {
+	border-bottom: 1px solid #ccc;                     /* titles of description details should have line under it */
+	padding: 5px;                                      /* add some padding */
+	color: #ccc;                                       /* text color of the titles */
+}
+
+.detailstable th, td {
+  border: 0px;                                         /* no borders on td, th elements */
+  color: #ccc;                                         /* details table text color */
+}
+
+.detailstable td {
+  text-align: left;                                    /* align text left */
+  vertical-align: top;                                 /* align top */
+}
+
+.detailstable {
+  width: 100%;                                         /* set to full width of details */
+  padding: 5px;                                        /* add some padding */
+}
+
+.details img {
+	max-width: 100%;                                   /* make sure images don't overflow in width on details */
+}
+
+.descriptiontitle {
+	grid-column: 2;                                    /* column 2 of grid */
+	grid-row: 2;                                       /* row 2 of grid */
+	padding-left: 10px;                                /* some padding left */
+	padding-right: 10px;                               /* some padding right */
+}
+
+
+.description {
+	color: #ccc;                                       /* text color */
+	grid-column: 2;                                    /* 2nd column of grid */
+	grid-row: 3;                                       /* 3rd row of grid */
+	overflow-y: auto;                                  /* overflow-y automatic (for adding scrollbar) */
+	overflow-x:hidden;                                 /* prevent horizontal scrollbar */
+	padding-left: 10px;                                /* some padding left */
+	padding-right: 10px;                               /* some padding right */
+}
+
+.description img {
+	max-width: 100%;                                   /* make sure images don't overflow in width to prevent scrollbars */
+}
+
+.MenuButton {
+  border: none;                                        /* Remove borders */
+  outline: none;                                       /* Remove outline */
+  background-color: #888;                              /* Set a background color */
+  color: #000;                                         /* Text color */
+  padding: 5px;                                        /* Some padding */
+  border-radius: 4px;                                  /* Rounded corners, border */
+  font-size: 20px;                                     /* Increase font size */
+  cursor:pointer;                                         /* Add a mouse pointer on hover */
+  margin-right: 20px;                                  /* to have some space on right side before next element */
+  -webkit-appearance: button;
+  -moz-appearance: button;
+  appearance: button;
+  text-decoration: none;
+}
+
+.MenuButton:hover {
+  background-color: #777;                              /* Add a dark-grey background on hover */
+  color: #CCC;                                         /* Text color */
+}
+
+a {
+ text-decoration: none;                                /* no text underline in links */
+}
+a:link {
+  color: #CCC;                                         /* unvisited link color */
+}
+a:visited {
+  color: #CCC;                                         /* visited link color */
+}
+a:hover {
+  color: #EEE;                                         /* mouse over link color */
+  text-decoration: underline;                          /* add text underline in links when mouse over */
+}
+a:active {
+  color: #CCC;                                         /* selected link color */
+}
+
+                                                       /* scrollbars W3C standard that is currently Firefox-only */
+* {
+  scrollbar-width: thin;                               /* small width */
+  scrollbar-color: #888 transparent;                   /* trackbar color + transparant background */
+}
+
+                                                       /* scrollbars on Chrome/Edge/Safari */
+*::-webkit-scrollbar {
+  width: 12px;                                         /* small width */
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;                             /* background color track */
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #AAA;                              /* background */
+  border-radius: 20px;                                 /* rounded corner, border */
+  border: 3px solid #888;                              /* add the border */
+}
+
+		</style>
+	</head>
+	<body style="background-image: linear-gradient(to bottom, rgba(0,0,0,0.52), rgba(0,0,0,0.73)), url('6d543d52-aa8a-4d83-ba27-d52fd41e6cc9/5302e976-93e3-4fc5-84da-a468a3e73eb3.png');">
+		<div class="cards">
+			<div class="card">
+				<div class="title">
+					<h2><button onclick="window.history.back()" class="MenuButton">Back</button><img Height="48" class="lozad" data-src="6d543d52-aa8a-4d83-ba27-d52fd41e6cc9/500b1a39-8dab-4db3-a7ed-227b08870c50.png"/> Red Dead Redemption: Game of the Year Edition</h2>
+				</div>
+				<div class="detailstitle">
+				<H3>Detalhes</H3>
+				</div>
+				<div class="details">
+					<div style="overflow: auto;">
+						<TABLE class="detailstable">
+							<col style="width:50%" />
+							<col style="width:50%" />
+							<TR>
+								<TD style="text-align:center" Colspan="2"><img Height="175" class="lozad" data-src="6d543d52-aa8a-4d83-ba27-d52fd41e6cc9/4a7c0619-e523-4445-a0ab-4fb414af279d.png"/></TD>
+							</TR>
+							<TR>
+								<TD>Tempo de jogo</TD>
+								<TD>N&#227;o Jogado</TD>
+							</TR>
+							<TR>
+								<TD>Última Atividade</TD>
+								<TD><a href="#quicklink-Nunca">Nunca</a> </TD>
+							</TR>
+							<TR>
+								<TD>Adicionado</TD>
+								<TD><a href="#quicklink-18/04/2024">18/04/2024</a> 19:39:28</TD>
+							</TR>
+							<TR>
+								<TD>Modificado</TD>
+								<TD><a href="#quicklink-10/03/2025">10/03/2025</a> 0:21:47</TD>
+							</TR>
+							<TR>
+								<TD>Status de Conclusão</TD>
+								<TD><a href="#quicklink-Not Played">Not Played</a></TD>
+							</TR>
+							<TR>
+								<TD>Biblioteca</TD>
+								<TD><a href="#quicklink-Playnite">Playnite</a></TD>
+							</TR>
+							<TR>
+								<TD>Fonte</TD>
+								<TD><a href="default%20list_source_ascendente_name_ascendente.html#quicklink-"></a></TD>
+							</TR>
+							<TR>
+								<TD>Plataforma</TD>
+								<TD><a href="default%20list_platform_ascendente_name_ascendente.html#quicklink-Super Nintendo">Super Nintendo</a><br/></TD>
+							</TR>
+							<TR>
+								<TD>Data de Lançamento</TD>
+								<TD><a href="#quicklink-2011">2011</a> </TD>
+							</TR>
+							<TR>
+								<TD>Pontuação da Comunidade</TD>
+								<TD><a href="default%20list%20combobox%20quicklinks_communityscore_ascendente_communityscore_ascendente.html#quicklink-89">89</a></TD>
+							</TR>
+							<TR>
+								<TD>Avaliação da crítica</TD>
+								<TD><a href="default%20list%20combobox%20quicklinks_criticscore_descendente_name_ascendente.html#quicklink-95">95</a></TD>
+							</TR>
+							<TR>
+								<TD>Pontuação do Usuário</TD>
+								<TD><a href="#quicklink-"></a></TD>
+							</TR>
+							<TR>
+								<TD>Gênero</TD>
+								<TD><a href="default%20list%20combobox%20quicklinks_genre_ascendente_name_ascendente.html#quicklink-Action-adventure">Action-adventure</a><br/></TD>
+							</TR>
+							<TR>
+								<TD>Desenvolvedor</TD>
+								<TD><a href="#quicklink-Rockstar San Diego">Rockstar San Diego</a><br/></TD>
+							</TR>
+							<TR>
+								<TD>Editor</TD>
+								<TD><a href="#quicklink-Rockstar Games">Rockstar Games</a><br/></TD>
+							</TR>
+							<TR>
+								<TD>Funções</TD>
+								<TD><a href="#quicklink-Multiplayer">Multiplayer</a><br/><a href="#quicklink-Single Player">Single Player</a><br/></TD>
+							</TR>
+							<TR>
+								<TD>Links</TD>
+								<TD><a href="https://en.wikipedia.org/wiki/Red_Dead_Redemption" target="_blank">Wikipedia</a><br/></TD>
+							</TR>
+							<TR>
+								<TD>Tag</TD>
+								<TD><a href="#quicklink-[EMT] Video Micro missing">[EMT] Video Micro missing</a><br/><a href="#quicklink-[EMT] Video missing">[EMT] Video missing</a><br/><a href="#quicklink-[HLTB] 20 a 30 horas">[HLTB] 20 a 30 horas</a><br/></TD>
+							</TR>
+						</TABLE>
+					</div>
+				</div>
+				<div class="descriptiontitle">
+					<H3>Descri&#231;&#227;o</H3>
+				</div>
+				<div class="description">
+					<p><i><b>Red Dead Redemption</b></i> is a 2010 <a href="https://en.wikipedia.org/wiki/Action-adventure_game">action-adventure game</a> developed by <a href="https://en.wikipedia.org/wiki/Rockstar_San_Diego">Rockstar San Diego</a> and published by <a href="https://en.wikipedia.org/wiki/Rockstar_Games">Rockstar Games</a>. A successor to 2004's <i><a href="https://en.wikipedia.org/wiki/Red_Dead_Revolver">Red Dead Revolver</a></i>, it is the second game in the <i><a href="https://en.wikipedia.org/wiki/Red_Dead">Red Dead</a></i> series. <i>Red Dead Redemption</i> is set during the decline of the <a href="https://en.wikipedia.org/wiki/American_frontier">American frontier</a> in the year 1911. It follows <a href="https://en.wikipedia.org/wiki/John_Marston">John Marston</a>, a former outlaw who, after his wife and son are taken hostage by the government in ransom for his services as a hired gun, sets out to bring three members of his former gang to justice. The narrative explores themes of the <a href="https://en.wikipedia.org/wiki/Cycle_of_violence">cycle of violence</a>, <a href="https://en.wikipedia.org/wiki/Masculinity">masculinity</a>, <a href="https://en.wikipedia.org/wiki/Redemption_(theology)">redemption</a>, and the <a href="https://en.wikipedia.org/wiki/American_Dream">American Dream</a>.</p>
+
+<p>The game is played from a <a href="https://en.wikipedia.org/wiki/Third-person_view">third-person perspective</a>. The player can <a href="https://en.wikipedia.org/wiki/Nonlinear_gameplay">freely roam</a> in its interactive <a href="https://en.wikipedia.org/wiki/Open_world">open world</a>, a fictionalized version of the <a href="https://en.wikipedia.org/wiki/Western_United_States">Western United States</a> and <a href="https://en.wikipedia.org/wiki/Northern_Mexico">Northern Mexico</a>, primarily by <a href="https://en.wikipedia.org/wiki/Horseback">horseback</a>, and on foot. Gunfights emphasize a <a href="https://en.wikipedia.org/wiki/Gunslinger">gunslinger</a> gameplay mechanic called "Dead Eye" that allows players to mark multiple shooting targets on enemies in <a href="https://en.wikipedia.org/wiki/Bullet_time">slow motion</a>. The game uses a morality system by which the player's actions affect their character's levels of honor, fame, and how <a href="https://en.wikipedia.org/wiki/Non-player_character">other characters</a> respond to the player. An <a href="https://en.wikipedia.org/wiki/Online_multiplayer">online multiplayer</a> mode is included with the original release, allowing up to 16 players to engage in both <a href="https://en.wikipedia.org/wiki/Cooperative_video_game">cooperative</a> and competitive gameplay in a recreation of the single-player setting.</p>
+
+<p><a href="https://en.wikipedia.org/wiki/Development_of_Red_Dead_Redemption">The game's development</a> lasted over five years, and it became one of the <a href="https://en.wikipedia.org/wiki/List_of_most_expensive_video_games_to_develop">most expensive video games</a> ever made. Rockstar improved <a href="https://en.wikipedia.org/wiki/Rockstar_Advanced_Game_Engine">its proprietary game engine</a> to increase its technological capabilities. The development team conducted extensive research, including field trips to <a href="https://en.wikipedia.org/wiki/Washington,_D.C.">Washington, D.C.</a> and analyzing classic <a href="https://en.wikipedia.org/wiki/Western_(genre)">Western</a> films, to achieve realism for the game. The team hired professional actors to perform the body movements through <a href="https://en.wikipedia.org/wiki/Motion_capture">motion capture</a>. <i>Red Dead Redemption</i> features an <a href="https://en.wikipedia.org/wiki/Music_of_Red_Dead_Redemption">original score</a> composed by Bill Elm and <a href="https://en.wikipedia.org/wiki/Woody_Jackson">Woody Jackson</a>. The game's development received controversy following accusations of unethical working practices. The studio's working hours and managerial style were met with public complaints from staff members.</p>
+
+<p><i>Red Dead Redemption</i> was released for the <a href="https://en.wikipedia.org/wiki/PlayStation_3">PlayStation 3</a> and <a href="https://en.wikipedia.org/wiki/Xbox_360">Xbox 360</a> in May 2010, for the <a href="https://en.wikipedia.org/wiki/Nintendo_Switch">Nintendo Switch</a> and <a href="https://en.wikipedia.org/wiki/PlayStation_4">PlayStation 4</a> in August 2023, and for <a href="https://en.wikipedia.org/wiki/Windows">Windows</a> in October 2024. It received critical acclaim for its visuals, music, performances, gameplay, and narrative. It won year-end accolades, including <a href="https://en.wikipedia.org/wiki/List_of_Game_of_the_Year_awards">Game of the Year</a> awards from several <a href="https://en.wikipedia.org/wiki/Gaming_publications">gaming publications</a>, and is considered one of <a href="https://en.wikipedia.org/wiki/History_of_video_game_consoles_(seventh_generation)">seventh-generation console gaming</a>'s most significant titles and among the <a href="https://en.wikipedia.org/wiki/Greatest_video_games_ever_made">greatest video games ever made</a>. It has shipped over 25 million copies. Several <a href="https://en.wikipedia.org/wiki/Downloadable_content">downloadable content</a> additions were released; <i><a href="https://en.wikipedia.org/wiki/Undead_Nightmare">Undead Nightmare</a></i> added a new single-player campaign in which Marston searches for a cure for an infectious <a href="https://en.wikipedia.org/wiki/Zombie_apocalypse">zombie plague</a>. A <a href="https://en.wikipedia.org/wiki/Prequel">prequel</a>, <i><a href="https://en.wikipedia.org/wiki/Red_Dead_Redemption_2">Red Dead Redemption 2</a></i>, was released in October 2018.</p>
+
+
+				</div>
+			</div>
+		</div>
+		<script src="https://cdn.jsdelivr.net/npm/lozad/dist/lozad.min.js"></script>
+		<script>
+			const observer = lozad(); // lazy loads elements with default selector as '.lozad'
+			observer.observe();
+		</script>
+	</body>	
+</html>
