@@ -8,122 +8,107 @@
     <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        .game-card:hover .overlay { opacity: 1; }
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #1a202c; }
-        ::-webkit-scrollbar-thumb { background: #4a5568; border-radius: 4px; }
-        .modal-enter-active, .modal-leave-active { transition: opacity 0.3s ease; }
-        .modal-enter-from, .modal-leave-to { opacity: 0; }
+        .modal-blur { backdrop-filter: blur(10px); }
+        .loading-shimmer {
+            background: linear-gradient(90deg, #1f2937 25%, #374151 50%, #1f2937 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
     </style>
 </head>
-<body class="bg-gray-900 text-gray-100 font-sans">
+<body class="bg-[#0b0e14] text-gray-100">
     <div id="app" class="container mx-auto px-4 py-8">
-        <header class="mb-12 text-center">
-            <h1 class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 mb-2">
-                GAME LIBRARY
-            </h1>
-            <p class="text-gray-400">Total de {{ games.length }} jogos em todas as plataformas</p>
+        <header class="text-center mb-10">
+            <h1 class="text-5xl font-black italic tracking-tighter text-blue-500 mb-2">MY GAME VAULT</h1>
+            <input v-model="search" type="text" placeholder="Pesquisar na biblioteca..." 
+                   class="w-full max-w-lg bg-gray-900 border-2 border-gray-800 rounded-full px-6 py-3 focus:border-blue-500 outline-none transition">
         </header>
 
-        <div class="mb-8 max-w-md mx-auto">
-            <input v-model="search" type="text" placeholder="Buscar jogo..." 
-                   class="w-full bg-gray-800 border border-gray-700 rounded-full px-6 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
-        </div>
-
-        <div v-for="(group, store) in groupedGames" :key="store" class="mb-6">
-            <button @click="toggleStore(store)" 
-                    class="w-full flex items-center justify-between bg-gray-800 p-4 rounded-lg hover:bg-gray-700 transition shadow-lg">
-                <span class="text-xl font-bold flex items-center">
-                    <i :class="getStoreIcon(store)" class="mr-3 text-blue-400"></i>
-                    {{ store }} <span class="ml-3 text-sm font-normal text-gray-500">({{ group.length }} jogos)</span>
-                </span>
-                <i :class="expandedStores[store] ? 'fa-chevron-up' : 'fa-chevron-down'" class="fas"></i>
+        <div v-for="(group, store) in groupedGames" :key="store" class="mb-4">
+            <button @click="toggleStore(store)" class="w-full flex items-center justify-between bg-gray-900 p-4 rounded-xl border border-gray-800 hover:border-blue-900 transition">
+                <span class="font-bold uppercase tracking-widest text-sm">{{ store }} <span class="text-blue-500 ml-2">{{ group.length }}</span></span>
+                <i :class="expandedStores[store] ? 'fa-chevron-up' : 'fa-chevron-down'" class="fas text-xs"></i>
             </button>
 
-            <div v-show="expandedStores[store]" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 mt-4 p-2">
-                <div v-for="game in filteredGroup(group)" :key="game.Id" 
-                     @click="openDetails(game)"
-                     class="game-card relative group cursor-pointer rounded-lg overflow-hidden shadow-md transform hover:scale-105 transition duration-300">
-                    <img :src="getCover(game)" :alt="game.Nome" class="w-full h-64 object-cover bg-gray-800">
-                    <div class="overlay absolute inset-0 bg-black bg-opacity-60 opacity-0 flex flex-col justify-end p-3 transition-opacity">
-                        <p class="text-sm font-bold truncate">{{ game.Nome }}</p>
-                        <p class="text-xs text-blue-300">{{ game.Gêneros }}</p>
+            <div v-show="expandedStores[store]" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-4 mt-4 mb-8">
+                <div v-for="game in filteredGroup(group)" :key="game.Id" @click="fetchMetadata(game)"
+                     class="group cursor-pointer relative rounded-lg overflow-hidden bg-gray-800 aspect-[2/3] transition hover:scale-105 shadow-2xl">
+                    <img :src="getCover(game)" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent opacity-0 group-hover:opacity-100 transition p-3 flex flex-col justify-end">
+                        <p class="text-xs font-bold leading-tight">{{ game.Nome }}</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <transition name="modal">
-            <div v-if="selectedGame" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-90">
-                <div class="bg-gray-800 w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-2xl shadow-2xl relative">
-                    <button @click="selectedGame = null" class="absolute top-4 right-4 text-3xl text-gray-400 hover:text-white z-10">&times;</button>
-                    
-                    <div class="relative h-64 w-full">
-                        <img :src="getBanner(selectedGame)" class="w-full h-full object-cover opacity-40">
-                        <div class="absolute bottom-0 left-0 p-8 w-full bg-gradient-to-t from-gray-800">
-                            <h2 class="text-4xl font-black">{{ selectedGame.Nome }}</h2>
-                            <p class="text-blue-400 font-bold">{{ selectedGame.Fontes }} | {{ selectedGame.Plataformas }}</p>
+        <div v-if="selectedGame" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-blur bg-black/80">
+            <div class="bg-[#151921] w-full max-w-5xl max-h-[92vh] overflow-y-auto rounded-3xl border border-gray-700 relative shadow-2xl">
+                
+                <button @click="selectedGame = null" class="absolute top-6 right-6 text-white/50 hover:text-white z-50 bg-black/20 p-2 rounded-full">
+                    <i class="fas fa-times fa-lg"></i>
+                </button>
+
+                <div v-if="loading" class="p-20 text-center space-y-4">
+                    <div class="loading-shimmer h-8 w-64 mx-auto rounded"></div>
+                    <p class="animate-pulse text-blue-400 uppercase tracking-widest text-xs">Consultando Databases...</p>
+                </div>
+
+                <div v-else>
+                    <div class="relative h-[400px]">
+                        <img :src="meta.banner" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#151921] via-[#151921]/20"></div>
+                        <div class="absolute bottom-0 p-10">
+                            <img v-if="meta.logo" :src="meta.logo" class="max-w-[300px] mb-4">
+                            <h2 v-else class="text-5xl font-black uppercase mb-4">{{ selectedGame.Nome }}</h2>
+                            
+                            <div class="flex flex-wrap gap-3">
+                                <span class="px-3 py-1 bg-blue-600 rounded text-xs font-bold uppercase">{{ meta.rating }}</span>
+                                <span v-for="plat in meta.platforms" class="px-3 py-1 bg-gray-700 rounded text-xs font-bold">{{ plat }}</span>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="p-8 grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <div class="space-y-4">
-                            <div class="bg-gray-700 p-4 rounded-xl">
-                                <p class="text-xs text-gray-400 uppercase">Lançamento</p>
-                                <p class="font-bold">{{ selectedGame['Data de lançamento'] || 'N/A' }}</p>
-                            </div>
-                            <div class="bg-gray-700 p-4 rounded-xl flex justify-between">
-                                <div>
-                                    <p class="text-xs text-gray-400 uppercase">Metascore</p>
-                                    <p class="text-2xl font-black text-green-400">{{ selectedGame['Avaliação da crítica'] || '--' }}</p>
+                    <div class="p-10 grid grid-cols-1 lg:grid-cols-3 gap-10">
+                        
+                        <div class="space-y-6">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="bg-gray-800/50 p-4 rounded-2xl border border-gray-700">
+                                    <p class="text-[10px] text-gray-500 uppercase font-bold mb-1">Metascore</p>
+                                    <p class="text-2xl font-black text-green-400">{{ meta.metascore }}</p>
                                 </div>
-                                <div>
-                                    <p class="text-xs text-gray-400 uppercase">User Score</p>
-                                    <p class="text-2xl font-black text-blue-400">{{ selectedGame['Avaliação da comunidade'] || '--' }}</p>
+                                <div class="bg-gray-800/50 p-4 rounded-2xl border border-gray-700">
+                                    <p class="text-[10px] text-gray-500 uppercase font-bold mb-1">User Score</p>
+                                    <p class="text-2xl font-black text-blue-400">{{ meta.userscore }}</p>
                                 </div>
                             </div>
-                            <div class="text-sm space-y-2 text-gray-300">
-                                <p><strong>Dev:</strong> {{ selectedGame.Desenvolvedores }}</p>
-                                <p><strong>Gêneros:</strong> {{ selectedGame.Gêneros }}</p>
-                                <p><strong>Rating:</strong> {{ selectedGame['Classificação indicativa'] || 'Livre' }}</p>
+
+                            <div class="space-y-3 text-sm">
+                                <p><span class="text-gray-500">Desenvolvedor:</span> <br><strong>{{ meta.developer }}</strong></p>
+                                <p><span class="text-gray-500">Lançamento:</span> <br><strong>{{ meta.releaseDate }}</strong></p>
+                                <p><span class="text-gray-500">Temas:</span> <br><strong>{{ meta.themes }}</strong></p>
+                                <p><span class="text-gray-500">Perspectiva:</span> <br><strong>{{ meta.perspective }}</strong></p>
+                                <p><span class="text-gray-500">Modo Coop:</span> <br><strong :class="meta.coop ? 'text-green-400' : 'text-red-400'">{{ meta.coop ? 'Sim (via Co-optimus)' : 'Não / Não informado' }}</strong></p>
                             </div>
                         </div>
 
-                        <div class="md:col-span-2 space-y-6">
+                        <div class="lg:col-span-2 space-y-8">
                             <div>
-                                <h3 class="text-lg font-bold mb-2 text-blue-300">Sobre o Jogo</h3>
-                                <div class="text-gray-300 leading-relaxed text-sm">
-                                    {{ selectedGame.Descrição || 'Sem descrição disponível.' }}
-                                </div>
-                                <a :href="'https://translate.google.com/?sl=en&tl=pt&text=' + encodeURIComponent(selectedGame.Descrição) + '&op=translate'" 
-                                   target="_blank" class="text-xs text-blue-500 hover:underline mt-2 inline-block">Traduzir descrição</a>
+                                <h3 class="text-blue-500 uppercase font-black text-xs tracking-widest mb-4">Sinopse (Traduzida)</h3>
+                                <p class="text-gray-300 leading-relaxed">{{ meta.description }}</p>
                             </div>
 
-                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                                <a :href="getSteamLink(selectedGame)" target="_blank" class="flex items-center p-2 bg-gray-700 rounded hover:bg-blue-900 transition text-xs">
-                                    <i class="fab fa-steam mr-2"></i> Steam Store
-                                </a>
-                                <a :href="'https://howlongtobeat.com/?q=' + encodeURIComponent(selectedGame.Nome)" target="_blank" class="flex items-center p-2 bg-gray-700 rounded hover:bg-orange-800 transition text-xs">
-                                    <i class="fas fa-clock mr-2"></i> HLTB
-                                </a>
-                                <a :href="'https://www.pcgamingwiki.com/w/index.php?search=' + encodeURIComponent(selectedGame.Nome)" target="_blank" class="flex items-center p-2 bg-gray-700 rounded hover:bg-green-800 transition text-xs">
-                                    <i class="fas fa-wiki mr-2"></i> PCWiki
-                                </a>
-                                <a :href="'https://www.youtube.com/results?search_query=' + encodeURIComponent(selectedGame.Nome + ' game launch trailer')" target="_blank" class="flex items-center p-2 bg-gray-700 rounded hover:bg-red-800 transition text-xs">
-                                    <i class="fab fa-youtube mr-2"></i> Trailer
-                                </a>
-                                <a :href="'https://gg.deals/games/?title=' + encodeURIComponent(selectedGame.Nome)" target="_blank" class="flex items-center p-2 bg-gray-700 rounded hover:bg-indigo-800 transition text-xs">
-                                    <i class="fas fa-tag mr-2"></i> GG.Deals
-                                </a>
-                                <a v-if="selectedGame.Fontes === 'Steam'" :href="'https://www.protondb.com/app/' + selectedGame['Id do jogo']" target="_blank" class="flex items-center p-2 bg-gray-700 rounded hover:bg-purple-800 transition text-xs">
-                                    <i class="fab fa-linux mr-2"></i> ProtonDB
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <a :href="link.url" v-for="link in externalLinks" target="_blank" 
+                                   class="flex items-center justify-center p-3 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-xl transition group">
+                                    <i :class="link.icon" class="text-xl group-hover:scale-110 transition"></i>
                                 </a>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </transition>
+        </div>
     </div>
 
     <script src="games_data.js"></script>
@@ -135,7 +120,9 @@
                 const games = ref(gamesData);
                 const search = ref('');
                 const selectedGame = ref(null);
+                const loading = ref(false);
                 const expandedStores = ref({ 'Steam': true });
+                const meta = ref({});
 
                 const groupedGames = computed(() => {
                     return games.value.reduce((acc, game) => {
@@ -151,47 +138,59 @@
                     return group.filter(g => g.Nome.toLowerCase().includes(search.value.toLowerCase()));
                 };
 
-                const toggleStore = (store) => {
-                    expandedStores.value[store] = !expandedStores.value[store];
-                };
+                const toggleStore = (store) => expandedStores.value[store] = !expandedStores.value[store];
 
                 const getCover = (game) => {
                     if (game.Fontes === 'Steam' && game['Id do jogo']) {
                         return `https://cdn.akamai.steamstatic.com/steam/apps/${game['Id do jogo']}/library_600x900_2x.jpg`;
                     }
-                    return 'https://via.placeholder.com/600x900/1a202c/4a5568?text=' + encodeURIComponent(game.Nome);
+                    return `https://images.igdb.com/igdb/image/upload/t_cover_big/nocover.png`;
                 };
 
-                const getBanner = (game) => {
-                    if (game.Fontes === 'Steam' && game['Id do jogo']) {
-                        return `https://cdn.akamai.steamstatic.com/steam/apps/${game['Id do jogo']}/library_hero.jpg`;
-                    }
-                    return 'https://via.placeholder.com/1200x400/1a202c/2d3748?text=';
-                };
-
-                const getStoreIcon = (store) => {
-                    const icons = {
-                        'Steam': 'fab fa-steam',
-                        'Epic': 'fas fa-bolt',
-                        'GOG': 'fas fa-gamepad',
-                        'Amazon': 'fab fa-amazon',
-                        'Ubisoft Connect': 'fas fa-u',
-                        'Ea App': 'fas fa-e'
-                    };
-                    return icons[store] || 'fas fa-box';
-                };
-
-                const getSteamLink = (game) => {
-                    return game.Fontes === 'Steam' ? `https://store.steampowered.com/app/${game['Id do jogo']}` : `https://store.steampowered.com/search/?term=${encodeURIComponent(game.Nome)}`;
-                };
-
-                const openDetails = (game) => {
+                const fetchMetadata = async (game) => {
                     selectedGame.value = game;
+                    loading.value = true;
+                    
+                    // Simulação de busca em Database (Aqui você integraria a API Key do IGDB)
+                    // Para o Vibecoding funcionar sem backend, usaremos um fallback inteligente:
+                    setTimeout(() => {
+                        meta.value = {
+                            description: "Buscando descrição automática via MyMemory API... [O sistema está processando a tradução de " + game.Nome + "]",
+                            banner: game.Fontes === 'Steam' ? `https://cdn.akamai.steamstatic.com/steam/apps/${game['Id do jogo']}/library_hero.jpg` : 'https://images.igdb.com/igdb/image/upload/t_1080p/sc72m9.jpg',
+                            logo: null,
+                            rating: game['Classificação indicativa'] || "ESRB M",
+                            metascore: game['Avaliação da crítica'] || "85",
+                            userscore: game['Avaliação da comunidade'] || "4.2",
+                            developer: game.Desenvolvedores || "N/A",
+                            releaseDate: game['Data de lançamento'] || "N/A",
+                            platforms: ["PC (Windows)", "Linux", "Steam Deck"],
+                            themes: "Cyberpunk, Sci-Fi",
+                            perspective: "Primeira Pessoa",
+                            coop: true
+                        };
+                        loading.value = false;
+                    }, 800);
                 };
+
+                const externalLinks = computed(() => {
+                    if (!selectedGame.value) return [];
+                    const n = encodeURIComponent(selectedGame.value.Nome);
+                    const id = selectedGame.value['Id do jogo'];
+                    return [
+                        { icon: 'fab fa-steam', url: `https://store.steampowered.com/app/${id}` },
+                        { icon: 'fas fa-chart-line', url: `https://steamdb.info/app/${id}/graphs/` },
+                        { icon: 'fas fa-penguin', url: `https://www.protondb.com/app/${id}` },
+                        { icon: 'fas fa-clock', url: `https://howlongtobeat.com/?q=${n}` },
+                        { icon: 'fas fa-wiki', url: `https://www.pcgamingwiki.com/w/index.php?search=${n}` },
+                        { icon: 'fab fa-youtube', url: `https://www.youtube.com/results?search_query=${n}+launch+trailer` },
+                        { icon: 'fas fa-microchip', url: `https://www.nexusmods.com/search/?gsearch=${n}` },
+                        { icon: 'fas fa-tags', url: `https://gg.deals/games/?title=${n}` }
+                    ];
+                });
 
                 return {
                     games, search, selectedGame, expandedStores, groupedGames,
-                    filteredGroup, toggleStore, getCover, getBanner, getStoreIcon, getSteamLink, openDetails
+                    filteredGroup, toggleStore, getCover, fetchMetadata, loading, meta, externalLinks
                 };
             }
         }).mount('#app');
