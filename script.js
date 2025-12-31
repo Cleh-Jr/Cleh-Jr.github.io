@@ -39,42 +39,54 @@ function renderLibrary(filter = "") {
     });
 
     sortedStores.forEach(store => {
-        const gamesInStore = grouped[store].filter(g => g.Nome.toLowerCase().includes(filter.toLowerCase()));
-        if (gamesInStore.length === 0) return;
+    const gamesInStore = grouped[store].filter(g => g.Nome.toLowerCase().includes(filter.toLowerCase()));
+    if (gamesInStore.length === 0) return;
 
-        const section = document.createElement('div');
-        section.className = 'mb-12';
-        section.innerHTML = `
-            <button class="w-full flex justify-between p-4 bg-gray-900/50 rounded-xl mb-6 border border-gray-800 font-bold uppercase tracking-widest hover:bg-gray-800 transition" 
-                    onclick="this.nextElementSibling.classList.toggle('hidden')">
-                <span><i class="fas fa-layer-group mr-3 text-blue-500"></i> ${store} <span class="text-blue-500 ml-2">${gamesInStore.length}</span></span>
-                <i class="fas fa-chevron-down text-xs"></i>
-            </button>
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
-                ${gamesInStore.map(game => {
-                    const steamId = game['Id do jogo'];
-                    const coverUrl = (steamId && !isNaN(steamId)) 
-                        ? `https://cdn.akamai.steamstatic.com/steam/apps/${steamId}/library_600x900_2x.jpg`
-                        : null;
+    const section = document.createElement('div');
+    section.className = 'mb-12';
+    section.innerHTML = `
+        <button class="w-full flex justify-between p-4 bg-gray-900/50 rounded-xl mb-6 border border-gray-800 font-bold uppercase tracking-widest hover:bg-gray-800 transition" 
+                onclick="this.nextElementSibling.classList.toggle('hidden')">
+            <span><i class="fas fa-layer-group mr-3 text-blue-500"></i> ${store} <span class="text-blue-500 ml-2">${gamesInStore.length}</span></span>
+            <i class="fas fa-chevron-down text-xs"></i>
+        </button>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+            ${gamesInStore.map(game => {
+                const steamId = game['Id do jogo'];
+                const nomeLimpo = game.Nome.replace(/[^a-zA-Z0-9 ]/g, ''); // Remove caracteres especiais para busca
+                
+                // Prioridade 1: ID da Steam direto (Mais rápido)
+                let coverUrl = (steamId && !isNaN(steamId) && steamId.length < 10) 
+                    ? `https://cdn.akamai.steamstatic.com/steam/apps/${steamId}/library_600x900_2x.jpg`
+                    : null;
 
-                    return `
-                    <div class="cursor-pointer hover:scale-105 transition transform rounded-xl overflow-hidden shadow-2xl aspect-[2/3] relative group bg-[#1e293b] border border-gray-800" 
-                         onclick="openDetails('${game.Id}')">
-                        ${coverUrl ? `<img src="${coverUrl}" class="w-full h-full object-cover relative z-10" loading="lazy" onerror="this.remove()">` : ''}
-                        <div class="absolute inset-0 flex items-center justify-center p-4 text-center z-0">
-                            <span class="text-gray-500 font-bold uppercase text-[10px] tracking-tighter">${game.Nome}</span>
-                        </div>
-                    </div>`;
-                }).join('')}
-            </div>
-        `;
-        container.appendChild(section);
-    });
-}
+                return `
+                <div class="cursor-pointer hover:scale-105 transition transform rounded-xl overflow-hidden shadow-2xl aspect-[2/3] relative group bg-[#1e293b] border border-gray-800" 
+                     onclick="openDetails('${game.Id}')">
+                    
+                    <div class="absolute inset-0 flex items-center justify-center p-4 text-center z-0">
+                        <span class="text-gray-500 font-bold uppercase text-[10px] tracking-tighter">${game.Nome}</span>
+                    </div>
+
+                    ${coverUrl ? `<img src="${coverUrl}" class="w-full h-full object-cover relative z-10" loading="lazy" onerror="this.style.display='none'">` : ''}
+                    
+                    <img src="https://smart-covers.vercel.app/api/cover?name=${encodeURIComponent(nomeLimpo)}" 
+                         class="absolute inset-0 w-full h-full object-cover z-20" 
+                         loading="lazy" 
+                         onerror="this.remove()">
+                </div>`;
+            }).join('')}
+        </div>
+    `;
+    container.appendChild(section);
+});
 
 function openDetails(gameId) {
-    const game = gamesData.find(g => g.Id === gameId);
-    if (!game) return;
+    const steamId = game['Id do jogo'];
+    const nomeJogo = encodeURIComponent(game.Nome);
+	const bannerUrl = (steamId && !isNaN(steamId)) 
+        ? `https://cdn.akamai.steamstatic.com/steam/apps/${steamId}/library_hero.jpg`
+        : `https://smart-covers.vercel.app/api/banner?name=${nomeJogo}`;
 
     const modal = document.getElementById('gameModal');
     const content = document.getElementById('modalContent');
