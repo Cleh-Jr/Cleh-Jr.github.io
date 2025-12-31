@@ -17,35 +17,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
 /**
  * 1. Limpa qualquer lixo no 'Id do jogo'
- * 2. Injeta o valor exato do ids.js
+ * 2. Injeta o valor exato do ids.js (incluindo "null")
  */
 function mergeGameData() {
+    // Verifica se as variáveis globais existem
     if (typeof idsData === 'undefined' || typeof gamesData === 'undefined') {
-        console.error("ERRO: Certifique-se de que ids.js e games_data.js foram carregados antes do script.js");
+        console.error("ERRO: Certifique-se de que ids.js (com a variável idsData) e games_data.js foram carregados.");
         return;
     }
 
-    // Cria mapa de referência: Nome -> SteamID (do arquivo ids.js)
+    // Cria mapa de referência: Nome -> Id do jogo (do arquivo ids.js)
     const idsMap = {};
     idsData.forEach(item => {
+        // Usa o nome exato como chave e pega a propriedade correta ["Id do jogo"]
         if (item.Nome) {
-            idsMap[item.Nome.trim()] = item.SteamID;
+            idsMap[item.Nome] = item["Id do jogo"];
         }
     });
+
+    console.log(`Mapa de IDs carregado com ${Object.keys(idsMap).length} jogos.`);
 
     // Processa a lista principal
     gamesData.forEach(game => {
-        // PASSO 1: Apaga qualquer valor existente (string, link, lixo)
-        game['Id do jogo'] = null;
+        // PASSO 1: Apaga a linha id de jogo (Reseta para "null")
+        // Isso garante que IDs antigos/errados sejam removidos antes de tentar achar o novo
+        game['Id do jogo'] = "null";
 
-        // PASSO 2: Substitui pelo valor do ids.js (se existir correspondência de nome)
-        const nomeLimpo = game.Nome.trim();
-        if (idsMap.hasOwnProperty(nomeLimpo)) {
-            game['Id do jogo'] = idsMap[nomeLimpo];
+        // PASSO 2: Encontra no arquivo ids o id correspondente e substitui
+        // A busca é feita pelo nome exato (sem trim ou lowerCase, conforme solicitado)
+        if (idsMap.hasOwnProperty(game.Nome)) {
+            game['Id do jogo'] = idsMap[game.Nome];
         }
     });
     
-    console.log("IDs sincronizados e limpos.");
+    console.log("Merge concluído. IDs atualizados.");
 }
 
 function renderLibrary(filter = "") {
@@ -84,14 +89,15 @@ function renderLibrary(filter = "") {
             </button>
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
                 ${gamesInStore.map(game => {
-                    // Pega o ID limpo
                     const finalId = game['Id do jogo'];
                     
-                    // Verifica se é um SteamID válido (número)
-                    // Se for "null", null, ou string não numérica, é considerado inválido (vai pro SGDB)
+                    // Verifica se é um SteamID válido:
+                    // - Deve existir
+                    // - Não pode ser a string "null"
+                    // - Deve ser um número
                     const isSteamId = finalId && finalId !== "null" && !isNaN(finalId);
                     
-                    // Link direto da Steam ou Vazio
+                    // Se for SteamID válido, usa CDN da Steam. Se não (é "null"), deixa vazio para o Observer buscar no SGDB.
                     const coverUrl = isSteamId 
                         ? `https://cdn.akamai.steamstatic.com/steam/apps/${finalId}/library_600x900_2x.jpg` 
                         : '';
@@ -170,7 +176,7 @@ function startImageObserver() {
                 const gameName = card.getAttribute('data-name');
                 const isSteam = card.getAttribute('data-is-steam') === 'true';
 
-                // Se NÃO é Steam (ou seja, ID era null ou inválido), busca no SGDB
+                // Se NÃO é Steam (ou seja, ID era "null" ou inválido), busca no SGDB
                 if (!isSteam && img.classList.contains('opacity-0')) {
                     setTimeout(async () => {
                         const newUrl = await fetchSGDBImage(gameName);
@@ -180,7 +186,7 @@ function startImageObserver() {
                         }
                     }, index * 100);
                 } 
-                // Se É Steam, apenas garante o fade-in
+                // Se É Steam, apenas garante o fade-in quando carregar
                 else if (isSteam) {
                     img.onload = () => img.classList.replace('opacity-0', 'opacity-100');
                     if (img.complete) img.classList.replace('opacity-0', 'opacity-100');
@@ -204,8 +210,10 @@ function openDetails(gameName) {
     
     // Links
     const pcWikiLink = `https://www.pcgamingwiki.com/wiki/${game.Nome.replace(/ /g, '_')}#System_requirements`;
-    // Se ID for válido, link app, senão busca
-    const isSteamId = steamId && !isNaN(steamId);
+    
+    // Se ID for válido (não é null string e é número), gera link do app
+    const isSteamId = steamId && steamId !== "null" && !isNaN(steamId);
+    
     const steamStoreLink = isSteamId ? `https://store.steampowered.com/app/${steamId}` : `https://store.steampowered.com/search/?term=${encodeURIComponent(game.Nome)}`;
 
     content.innerHTML = `
