@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Game Vault</title>
+    <title>My Game Vault V2</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -16,17 +16,17 @@
             <h1 class="text-5xl md:text-6xl font-black text-blue-600 italic mb-6 tracking-tighter">MY GAME VAULT</h1>
             <div class="relative max-w-xl mx-auto group">
                 <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-blue-500 transition"></i>
-                <input type="text" id="searchInput" placeholder="Pesquisar jogo..." 
+                <input type="text" id="searchInput" placeholder="Pesquisar na coleção..." 
                        class="w-full p-4 pl-12 bg-[#151921] border border-gray-800 rounded-2xl focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 text-white transition placeholder-gray-600">
             </div>
         </header>
 
-        <div id="libraryContainer" class="min-h-screen"></div>
+        <div id="libraryContainer" class="min-h-screen pb-20"></div>
     </div>
 
-    <div id="gameModal" class="modal-overlay fixed inset-0 hidden z-50 flex items-center justify-center p-0 md:p-4 opacity-0 transition-opacity duration-300">
-        <div id="modalContent" class="bg-[#0f1219] w-full max-w-5xl h-full md:h-[90vh] md:rounded-2xl shadow-2xl overflow-hidden flex flex-col border border-gray-800 relative">
-            </div>
+    <div id="gameModal" class="modal-overlay fixed inset-0 hidden z-50 flex items-center justify-center md:p-6 opacity-0 transition-opacity duration-300">
+        <div id="modalContent" class="bg-[#0f1219] w-full max-w-6xl h-full md:h-[85vh] md:rounded-[2rem] shadow-2xl overflow-hidden flex flex-col border border-gray-800 relative ring-1 ring-white/10">
+        </div>
     </div>
 
     <script src="games_data.js"></script>
