@@ -9,16 +9,17 @@ function renderLibrary(filter = "") {
     const container = document.getElementById('libraryContainer');
     container.innerHTML = '';
 
-    // Ordem exata solicitada
+    // LISTA DE ORDEM: Ajustada para os nomes que costumam vir no JSON do Playnite
     const storeOrder = [
         "Steam", 
         "Steam Family Sharing", 
-        "Epic Games", 
+        "Epic", 
         "EA App", 
+        "Origin",
         "Ubisoft Connect", 
         "GOG", 
         "Battle.net", 
-        "Amazon Games", 
+        "Amazon", 
         "RobotCache"
     ];
 
@@ -29,64 +30,64 @@ function renderLibrary(filter = "") {
         return acc;
     }, {});
 
-    // Ordenação robusta ignorando Case
+    // ORDENAÇÃO: Compara o nome da loja no JSON com a nossa lista oficial
     const sortedStores = Object.keys(grouped).sort((a, b) => {
-        let indexA = storeOrder.findIndex(s => s.toLowerCase() === a.toLowerCase());
-        let indexB = storeOrder.findIndex(s => s.toLowerCase() === b.toLowerCase());
+        let indexA = storeOrder.findIndex(s => a.toLowerCase().includes(s.toLowerCase()));
+        let indexB = storeOrder.findIndex(s => b.toLowerCase().includes(s.toLowerCase()));
+        
         if (indexA === -1) indexA = 999;
         if (indexB === -1) indexB = 999;
+        
         return indexA - indexB;
     });
 
     sortedStores.forEach(store => {
-    const gamesInStore = grouped[store].filter(g => g.Nome.toLowerCase().includes(filter.toLowerCase()));
-    if (gamesInStore.length === 0) return;
+        const gamesInStore = grouped[store].filter(g => g.Nome.toLowerCase().includes(filter.toLowerCase()));
+        if (gamesInStore.length === 0) return;
 
-    const section = document.createElement('div');
-    section.className = 'mb-12';
-    section.innerHTML = `
-        <button class="w-full flex justify-between p-4 bg-gray-900/50 rounded-xl mb-6 border border-gray-800 font-bold uppercase tracking-widest hover:bg-gray-800 transition" 
-                onclick="this.nextElementSibling.classList.toggle('hidden')">
-            <span><i class="fas fa-layer-group mr-3 text-blue-500"></i> ${store} <span class="text-blue-500 ml-2">${gamesInStore.length}</span></span>
-            <i class="fas fa-chevron-down text-xs"></i>
-        </button>
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
-            ${gamesInStore.map(game => {
-                const steamId = game['Id do jogo'];
-                const nomeLimpo = game.Nome.replace(/[^a-zA-Z0-9 ]/g, ''); // Remove caracteres especiais para busca
-                
-                // Prioridade 1: ID da Steam direto (Mais rápido)
-                let coverUrl = (steamId && !isNaN(steamId) && steamId.length < 10) 
-                    ? `https://cdn.akamai.steamstatic.com/steam/apps/${steamId}/library_600x900_2x.jpg`
-                    : null;
-
-                return `
-                <div class="cursor-pointer hover:scale-105 transition transform rounded-xl overflow-hidden shadow-2xl aspect-[2/3] relative group bg-[#1e293b] border border-gray-800" 
-                     onclick="openDetails('${game.Id}')">
+        const section = document.createElement('div');
+        section.className = 'mb-12';
+        section.innerHTML = `
+            <button class="w-full flex justify-between p-4 bg-gray-900/50 rounded-xl mb-6 border border-gray-800 font-bold uppercase tracking-widest hover:bg-gray-800 transition" 
+                    onclick="this.nextElementSibling.classList.toggle('hidden')">
+                <span><i class="fas fa-layer-group mr-3 text-blue-500"></i> ${store} <span class="text-blue-500 ml-2">${gamesInStore.length}</span></span>
+                <i class="fas fa-chevron-down text-xs"></i>
+            </button>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+                ${gamesInStore.map(game => {
+                    const steamId = game['Id do jogo'];
+                    const nomeLimpo = game.Nome.replace(/[^a-zA-Z0-9 ]/g, '');
                     
-                    <div class="absolute inset-0 flex items-center justify-center p-4 text-center z-0">
-                        <span class="text-gray-500 font-bold uppercase text-[10px] tracking-tighter">${game.Nome}</span>
-                    </div>
+                    // Prioridade 1: ID da Steam
+                    let urlId = (steamId && !isNaN(steamId) && steamId.length < 10) 
+                        ? `https://cdn.akamai.steamstatic.com/steam/apps/${steamId}/library_600x900_2x.jpg`
+                        : null;
 
-                    ${coverUrl ? `<img src="${coverUrl}" class="w-full h-full object-cover relative z-10" loading="lazy" onerror="this.style.display='none'">` : ''}
-                    
-                    <img src="https://smart-covers.vercel.app/api/cover?name=${encodeURIComponent(nomeLimpo)}" 
-                         class="absolute inset-0 w-full h-full object-cover z-20" 
-                         loading="lazy" 
-                         onerror="this.remove()">
-                </div>`;
-            }).join('')}
-        </div>
-    `;
-    container.appendChild(section);
-});
+                    return `
+                    <div class="cursor-pointer hover:scale-105 transition transform rounded-xl overflow-hidden shadow-2xl aspect-[2/3] relative group bg-[#1e293b] border border-gray-800" 
+                         onclick="openDetails('${game.Id}')">
+                        
+                        <div class="absolute inset-0 flex items-center justify-center p-4 text-center z-0">
+                            <span class="text-gray-600 font-bold uppercase text-[9px] tracking-tighter leading-tight">${game.Nome}</span>
+                        </div>
+
+                        <img src="https://images.weserv.nl/?url=https://www.steamgriddb.com/api/v2/search/autocomplete/${encodeURIComponent(nomeLimpo)}&errorredirect=https://cdn.akamai.steamstatic.com/steam/apps/400/library_600x900_2x.jpg" 
+                             class="absolute inset-0 w-full h-full object-cover z-10" 
+                             loading="lazy" 
+                             onerror="this.style.opacity='0'">
+
+                        ${urlId ? `<img src="${urlId}" class="w-full h-full object-cover relative z-20" loading="lazy" onerror="this.remove()">` : ''}
+                    </div>`;
+                }).join('')}
+            </div>
+        `;
+        container.appendChild(section);
+    });
+}
 
 function openDetails(gameId) {
-    const steamId = game['Id do jogo'];
-    const nomeJogo = encodeURIComponent(game.Nome);
-	const bannerUrl = (steamId && !isNaN(steamId)) 
-        ? `https://cdn.akamai.steamstatic.com/steam/apps/${steamId}/library_hero.jpg`
-        : `https://smart-covers.vercel.app/api/banner?name=${nomeJogo}`;
+    const game = gamesData.find(g => g.Id === gameId);
+    if (!game) return;
 
     const modal = document.getElementById('gameModal');
     const content = document.getElementById('modalContent');
@@ -95,11 +96,11 @@ function openDetails(gameId) {
     const steamId = game['Id do jogo'];
     const bannerUrl = (steamId && !isNaN(steamId)) 
         ? `https://cdn.akamai.steamstatic.com/steam/apps/${steamId}/library_hero.jpg`
-        : null;
+        : `https://images.weserv.nl/?url=https://www.steamgriddb.com/api/v2/search/autocomplete/${encodeURIComponent(game.Nome)}&default=https://images.igdb.com/igdb/image/upload/t_1080p/sc72m9.jpg`;
 
     content.innerHTML = `
         <div class="relative h-96 bg-[#0b0e14]">
-            ${bannerUrl ? `<img src="${bannerUrl}" class="w-full h-full object-cover opacity-50">` : ''}
+            <img src="${bannerUrl}" class="w-full h-full object-cover opacity-50" onerror="this.src=''">
             <div class="absolute inset-0 bg-gradient-to-t from-[#151921] via-transparent"></div>
             <div class="absolute bottom-0 p-10">
                 <h2 class="text-6xl font-black uppercase italic tracking-tighter leading-none">${game.Nome}</h2>
@@ -117,14 +118,8 @@ function openDetails(gameId) {
                 <hr class="border-gray-800">
                 
                 <div class="flex justify-between">
-                    <div>
-                        <p class="text-[10px] text-gray-500 uppercase font-bold">Crítica</p>
-                        <p class="text-3xl font-black text-green-400">${game['Avaliação da crítica'] || '--'}</p>
-                    </div>
-                    <div>
-                        <p class="text-[10px] text-gray-500 uppercase font-bold">Comunidade</p>
-                        <p class="text-3xl font-black text-blue-400">${game['Avaliação da comunidade'] || '--'}</p>
-                    </div>
+                    <div><p class="text-[10px] text-gray-500 uppercase font-bold">Crítica</p><p class="text-3xl font-black text-green-400">${game['Avaliação da crítica'] || '--'}</p></div>
+                    <div><p class="text-[10px] text-gray-500 uppercase font-bold">Comunidade</p><p class="text-3xl font-black text-blue-400">${game['Avaliação da comunidade'] || '--'}</p></div>
                 </div>
             </div>
 
