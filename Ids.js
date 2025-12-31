@@ -1,4 +1,4 @@
-const gamesData = [
+const idsData =[
   {
     "Nome": "[REDACTED]",
     "Fontes": "Epic",
