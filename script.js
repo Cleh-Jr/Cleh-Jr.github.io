@@ -15,7 +15,8 @@ async function fetchSteamId(gameName) {
     if (steamIdCache[gameName]) return steamIdCache[gameName];
     
     try {
-        const cleanName = encodeURIComponent(gameName.replace(/[^a-zA-Z0-9 ]/g, ' '));
+        // Limpeza do nome para melhorar a precisão da busca
+        const cleanName = encodeURIComponent(gameName.replace(/Game of the Year Edition|GOTY|Definitive Edition|Director's Cut|Gold Edition|Special Edition|Ultimate Edition|Complete Edition|Deluxe Edition/gi, '').replace(/[^a-zA-Z0-9 ]/g, ' ').trim());
         const response = await fetch(`${CORS_PROXY}https://store.steampowered.com/api/storesearch/?term=${cleanName}&l=brazilian&cc=BR`);
         const data = await response.json();
         
@@ -93,21 +94,26 @@ function renderLibrary(filter = "") {
 
 function startImageObserver() {
     const observer = new IntersectionObserver((entries) => {
-        entries.forEach(async entry => {
+        entries.forEach(async (entry, index) => {
             if (entry.isIntersecting) {
                 const card = entry.target;
                 const img = card.querySelector('.game-img');
                 const gameName = card.getAttribute('data-name');
                 let steamId = card.getAttribute('data-id');
 
-                // Se não tem ID, pesquisa pelo nome
+                // Se não tem ID, pesquisa pelo nome com pequeno delay para não travar
                 if (!steamId) {
-                    steamId = await fetchSteamId(gameName);
-                }
-
-                if (steamId) {
-                    img.src = `https://cdn.akamai.steamstatic.com/steam/apps/${steamId}/library_600x900_2x.jpg`;
-                    img.onload = () => img.classList.replace('opacity-0', 'opacity-100');
+                    setTimeout(async () => {
+                        steamId = await fetchSteamId(gameName);
+                        if (steamId) {
+                            img.src = `https://cdn.akamai.steamstatic.com/steam/apps/${steamId}/library_600x900_2x.jpg`;
+                            img.onload = () => img.classList.replace('opacity-0', 'opacity-100');
+                        }
+                    }, index * 100);
+                } else if (steamId && img.classList.contains('opacity-0')) {
+                     // Caso já tenha ID mas a imagem não carregou (ex: cache)
+                     img.src = `https://cdn.akamai.steamstatic.com/steam/apps/${steamId}/library_600x900_2x.jpg`;
+                     img.onload = () => img.classList.replace('opacity-0', 'opacity-100');
                 }
                 observer.unobserve(card);
             }
@@ -125,68 +131,73 @@ async function openDetails(gameId) {
     const content = document.getElementById('modalContent');
     const pcWikiLink = `https://www.pcgamingwiki.com/wiki/${game.Nome.replace(/ /g, '_')}#System_requirements`;
 
-    // Busca o ID (seja do JSON ou via pesquisa por nome)
+    // Busca o ID (seja do JSON ou via pesquisa por nome) para usar nos links
     let sId = game['Id do jogo'];
     if (!sId || isNaN(sId) || String(sId).length > 12) {
         sId = await fetchSteamId(game.Nome);
     }
 
-    const bannerUrl = sId ? `https://cdn.akamai.steamstatic.com/steam/apps/${sId}/library_hero.jpg` : null;
-
+    // ALTERAÇÃO: Layout com Header Flutuante e sem Banner Gigante
     content.innerHTML = `
-        <div class="relative h-96 bg-[#0b0e14]">
-            <img src="${bannerUrl}" class="w-full h-full object-cover opacity-50" onerror="this.style.display='none'">
-            <div class="absolute inset-0 bg-gradient-to-t from-[#151921] via-transparent"></div>
-            <div class="absolute bottom-0 p-10">
-                <h2 class="text-6xl font-black uppercase italic tracking-tighter leading-none">${game.Nome}</h2>
-                <p class="text-blue-500 font-bold mt-4 tracking-[0.3em] uppercase text-sm">${game.Fontes}</p>
+        <div class="sticky top-0 z-50 bg-[#0f1219]/95 backdrop-blur-md px-8 py-6 border-b border-gray-800 flex justify-between items-start shrink-0 shadow-lg">
+            <div>
+                <h2 class="text-4xl md:text-6xl font-black uppercase italic tracking-tighter text-white leading-none">
+                    ${game.Nome}
+                </h2>
+                <p class="text-blue-500 font-bold mt-2 uppercase text-xs tracking-[0.3em]">${game.Fontes}</p>
             </div>
+            <button onclick="closeModal()" class="w-12 h-12 rounded-full bg-gray-800 hover:bg-red-500 hover:text-white text-gray-400 transition flex items-center justify-center shrink-0 ml-4">
+                <i class="fas fa-times text-xl"></i>
+            </button>
         </div>
 
-        <div class="p-10 grid grid-cols-1 md:grid-cols-3 gap-10">
-            <div class="space-y-6 text-sm bg-black/40 p-8 rounded-[2rem] border border-gray-800">
-                <p><span class="text-gray-500 uppercase text-[10px] font-black tracking-widest">Desenvolvedor</span><br><strong class="text-white">${game.Desenvolvedores || 'N/A'}</strong></p>
-                <p><span class="text-gray-500 uppercase text-[10px] font-black tracking-widest">Lançamento</span><br><strong class="text-white">${game['Data de lançamento'] || 'N/A'}</strong></p>
-                <p><span class="text-gray-500 uppercase text-[10px] font-black tracking-widest">Gêneros</span><br><strong class="text-white">${game.Gêneros || 'N/A'}</strong></p>
-                <p><span class="text-gray-500 uppercase text-[10px] font-black tracking-widest">Classificação</span><br><strong class="text-white">${game['Classificação indicativa'] || 'N/A'}</strong></p>
-                
-                <hr class="border-gray-800">
-                
-                <div class="flex justify-between">
-                    <div>
-                        <p class="text-[10px] text-gray-500 uppercase font-bold">Crítica</p>
-                        <p class="text-3xl font-black text-green-400">${game['Avaliação da crítica'] || '--'}</p>
+        <div class="overflow-y-auto p-10 h-full">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                <div class="space-y-6 text-sm bg-black/40 p-8 rounded-[2rem] border border-gray-800 h-fit">
+                    <p><span class="text-gray-500 uppercase text-[10px] font-black tracking-widest">Desenvolvedor</span><br><strong class="text-white">${game.Desenvolvedores || 'N/A'}</strong></p>
+                    <p><span class="text-gray-500 uppercase text-[10px] font-black tracking-widest">Lançamento</span><br><strong class="text-white">${game['Data de lançamento'] || 'N/A'}</strong></p>
+                    <p><span class="text-gray-500 uppercase text-[10px] font-black tracking-widest">Gêneros</span><br><strong class="text-white">${game.Gêneros || 'N/A'}</strong></p>
+                    <p><span class="text-gray-500 uppercase text-[10px] font-black tracking-widest">Classificação</span><br><strong class="text-white">${game['Classificação indicativa'] || 'N/A'}</strong></p>
+                    
+                    <hr class="border-gray-800">
+                    
+                    <div class="flex justify-between">
+                        <div>
+                            <p class="text-[10px] text-gray-500 uppercase font-bold">Crítica</p>
+                            <p class="text-3xl font-black text-green-400">${game['Avaliação da crítica'] || '--'}</p>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-gray-500 uppercase font-bold">Comunidade</p>
+                            <p class="text-3xl font-black text-blue-400">${game['Avaliação da comunidade'] || '--'}</p>
+                        </div>
                     </div>
+                </div>
+
+                <div class="md:col-span-2 space-y-10">
                     <div>
-                        <p class="text-[10px] text-gray-500 uppercase font-bold">Comunidade</p>
-                        <p class="text-3xl font-black text-blue-400">${game['Avaliação da comunidade'] || '--'}</p>
+                        <h3 class="text-blue-500 font-black text-xs uppercase tracking-[0.4em] mb-4">Descrição</h3>
+                        <p class="text-gray-300 leading-relaxed text-lg font-medium">${game.Descrição || 'Nenhuma descrição disponível.'}</p>
+                    </div>
+
+                    <div class="bg-blue-600/5 p-8 rounded-3xl border border-blue-500/20 group hover:bg-blue-600/10 transition">
+                        <a href="${pcWikiLink}" target="_blank" class="flex items-center text-blue-400 font-bold uppercase text-xs tracking-widest">
+                            <i class="fas fa-microchip mr-4 text-xl"></i> Requerimentos do Sistema
+                        </a>
+                    </div>
+
+                    <div class="flex flex-wrap gap-4 pt-4">
+                        <a title="YouTube" href="https://www.youtube.com/results?search_query=${encodeURIComponent(game.Nome)}+launch+trailer" target="_blank" class="btn-icon bg-[#FF0000]"><i class="fab fa-youtube"></i></a>
+                        <a title="Steam Store" href="https://store.steampowered.com/search/?term=${encodeURIComponent(game.Nome)}" target="_blank" class="btn-icon bg-[#171a21]"><i class="fab fa-steam"></i></a>
+                        <a title="SteamDB" href="https://steamdb.info/app/${sId}/" target="_blank" class="btn-icon bg-[#1b2838]"><i class="fas fa-chart-line"></i></a>
+                        <a title="ProtonDB" href="https://www.protondb.com/app/${sId}" target="_blank" class="btn-icon bg-[#212121]"><i class="fab fa-linux"></i></a>
+                        <a title="Co-optimus" href="https://www.co-optimus.com/search.php?q=${encodeURIComponent(game.Nome)}" target="_blank" class="btn-icon bg-[#005596]"><i class="fas fa-users"></i></a>
+                        <a title="HowLongToBeat" href="https://howlongtobeat.com/?q=${encodeURIComponent(game.Nome)}" target="_blank" class="btn-icon bg-[#212121]"><i class="fas fa-clock"></i></a>
+                        <a title="Nexus Mods" href="https://www.nexusmods.com/search/?gsearch=${encodeURIComponent(game.Nome)}" target="_blank" class="btn-icon bg-[#da8100]"><i class="fas fa-puzzle-piece"></i></a>
+                        <a title="GG Deals" href="https://gg.deals/games/?title=${encodeURIComponent(game.Nome)}" target="_blank" class="btn-icon bg-[#004a00]"><i class="fas fa-tag"></i></a>
                     </div>
                 </div>
             </div>
-
-            <div class="md:col-span-2 space-y-10">
-                <div>
-                    <h3 class="text-blue-500 font-black text-xs uppercase tracking-[0.4em] mb-4">Descrição</h3>
-                    <p class="text-gray-300 leading-relaxed text-lg font-medium">${game.Descrição || 'Nenhuma descrição disponível.'}</p>
-                </div>
-
-                <div class="bg-blue-600/5 p-8 rounded-3xl border border-blue-500/20 group hover:bg-blue-600/10 transition">
-                    <a href="${pcWikiLink}" target="_blank" class="flex items-center text-blue-400 font-bold uppercase text-xs tracking-widest">
-                        <i class="fas fa-microchip mr-4 text-xl"></i> Requerimentos do Sistema
-                    </a>
-                </div>
-
-                <div class="flex flex-wrap gap-4 pt-4">
-                    <a title="YouTube" href="https://www.youtube.com/results?search_query=${encodeURIComponent(game.Nome)}+launch+trailer" target="_blank" class="btn-icon bg-[#FF0000]"><i class="fab fa-youtube"></i></a>
-                    <a title="Steam Store" href="https://store.steampowered.com/search/?term=${encodeURIComponent(game.Nome)}" target="_blank" class="btn-icon bg-[#171a21]"><i class="fab fa-steam"></i></a>
-                    <a title="SteamDB" href="https://steamdb.info/app/${sId}/" target="_blank" class="btn-icon bg-[#1b2838]"><i class="fas fa-chart-line"></i></a>
-                    <a title="ProtonDB" href="https://www.protondb.com/app/${sId}" target="_blank" class="btn-icon bg-[#212121]"><i class="fab fa-linux"></i></a>
-                    <a title="Co-optimus" href="https://www.co-optimus.com/search.php?q=${encodeURIComponent(game.Nome)}" target="_blank" class="btn-icon bg-[#005596]"><i class="fas fa-users"></i></a>
-                    <a title="HowLongToBeat" href="https://howlongtobeat.com/?q=${encodeURIComponent(game.Nome)}" target="_blank" class="btn-icon bg-[#212121]"><i class="fas fa-clock"></i></a>
-                    <a title="Nexus Mods" href="https://www.nexusmods.com/search/?gsearch=${encodeURIComponent(game.Nome)}" target="_blank" class="btn-icon bg-[#da8100]"><i class="fas fa-puzzle-piece"></i></a>
-                    <a title="GG Deals" href="https://gg.deals/games/?title=${encodeURIComponent(game.Nome)}" target="_blank" class="btn-icon bg-[#004a00]"><i class="fas fa-tag"></i></a>
-                </div>
-            </div>
+            <div class="h-20"></div>
         </div>
     `;
 
