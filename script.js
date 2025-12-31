@@ -17,18 +17,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
 /**
  * 1. Limpa qualquer lixo no 'Id do jogo'
- * 2. Injeta o valor exato do ids.js (incluindo "null")
+ * 2. Injeta o valor exato do Ids.js (incluindo "null")
  */
 function mergeGameData() {
     // Verifica se as variáveis globais existem
-    if (typeof idsData === 'undefined' || typeof gamesData === 'undefined') {
-        console.error("ERRO: Certifique-se de que ids.js (com a variável idsData) e games_data.js foram carregados.");
+    if (typeof IdsData === 'undefined' || typeof gamesData === 'undefined') {
+        console.error("ERRO: Certifique-se de que Ids.js (com a variável IdsData) e games_data.js foram carregados.");
         return;
     }
 
-    // Cria mapa de referência: Nome -> Id do jogo (do arquivo ids.js)
+    // Cria mapa de referência: Nome -> Id do jogo (do arquivo Ids.js)
     const idsMap = {};
-    idsData.forEach(item => {
+    IdsData.forEach(item => {
         // Usa o nome exato como chave e pega a propriedade correta ["Id do jogo"]
         if (item.Nome) {
             idsMap[item.Nome] = item["Id do jogo"];
