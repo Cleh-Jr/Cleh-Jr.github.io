@@ -1,6 +1,6 @@
 // --- CONFIGURAÇÃO ---
 // 1. Pegue sua chave em: https://www.steamgriddb.com/profile/preferences/api
-const SGDB_API_KEY = "c1c6a611af8537dfde7babca64617fa4"; 
+const SGDB_API_KEY = c1c6a611af8537dfde7babca64617fa4; 
 
 // Proxy para permitir a conexão do navegador com a API
 const CORS_PROXY = "https://corsproxy.io/?";
