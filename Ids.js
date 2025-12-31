@@ -52,17 +52,17 @@ const gamesData = [
   {
     "Nome": "3 Count Bout",
     "Fontes": "Amazon",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "3 out of 10",
     "Fontes": "Epic",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "3 out of 10: Season Two",
     "Fontes": "Epic",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "3D Aim Trainer",
@@ -147,7 +147,7 @@ const gamesData = [
   {
     "Nome": "Advanced Dungeons & Dragons: Hillsfar",
     "Fontes": "GOG",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Aegis Defenders",
@@ -187,7 +187,7 @@ const gamesData = [
   {
     "Nome": "Akalabeth: World of Doom",
     "Fontes": "GOG",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Akane",
@@ -237,7 +237,7 @@ const gamesData = [
   {
     "Nome": "Alpha Mission II",
     "Fontes": "Amazon",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Alwa's Awakening",
@@ -332,7 +332,7 @@ const gamesData = [
   {
     "Nome": "Art of Fighting 3: The Path of The Warrior",
     "Fontes": "Amazon",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Art of Rally",
@@ -602,7 +602,7 @@ const gamesData = [
   {
     "Nome": "Besiege + The Splintered Sea DLC",
     "Fontes": "Amazon",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Betrayer",
@@ -642,7 +642,7 @@ const gamesData = [
   {
     "Nome": "BioShock 2 Remastered",
     "Fontes": "Epic",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "BioShock Infinite: Complete Edition",
@@ -652,7 +652,7 @@ const gamesData = [
   {
     "Nome": "BioShock Remastered",
     "Fontes": "Epic",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Black Book",
@@ -1132,7 +1132,7 @@ const gamesData = [
   {
     "Nome": "Crossed Swords",
     "Fontes": "Amazon",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Crying Suns",
@@ -1442,7 +1442,7 @@ const gamesData = [
   {
     "Nome": "Deus Ex GOTY Edition",
     "Fontes": "GOG",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Deus Ex: Human Revolution - Director’s Cut",
@@ -1477,7 +1477,7 @@ const gamesData = [
   {
     "Nome": "Diablo Immortal",
     "Fontes": "Battle.net",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Diablo IV",
@@ -1492,7 +1492,7 @@ const gamesData = [
   {
     "Nome": "Dink Smallwood HD",
     "Fontes": "GOG",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "DiRT Rally",
@@ -1542,7 +1542,7 @@ const gamesData = [
   {
     "Nome": "Divine Knockout",
     "Fontes": "Epic",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Divine Knockout (DKO)",
@@ -1597,7 +1597,7 @@ const gamesData = [
   {
     "Nome": "Doomdark's Revenge",
     "Fontes": "GOG",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Doors - Paradox",
@@ -1772,7 +1772,7 @@ const gamesData = [
   {
     "Nome": "ENDLESS Legend Definitive Edition",
     "Fontes": "Amazon",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "ENDLESS Space - Definitive Edition",
@@ -1862,7 +1862,7 @@ const gamesData = [
   {
     "Nome": "Evil Dead The Game",
     "Fontes": "Epic",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Evoland Legendary Edition",
@@ -1897,7 +1897,7 @@ const gamesData = [
   {
     "Nome": "F.E.A.R. Platinum",
     "Fontes": "GOG",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "F.I.S.T.: Forged In Shadow Torch",
@@ -1917,7 +1917,7 @@ const gamesData = [
   {
     "Nome": "Fall Guys",
     "Fontes": "Epic",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Fall of Porcupine: Prologue",
@@ -1987,7 +1987,7 @@ const gamesData = [
   {
     "Nome": "Faraway 2: Jungle Escape",
     "Fontes": "Amazon",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Faraway: Arctic Escape",
@@ -2022,7 +2022,7 @@ const gamesData = [
   {
     "Nome": "Fatal Fury Special",
     "Fontes": "Amazon",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "FATE",
@@ -2097,7 +2097,7 @@ const gamesData = [
   {
     "Nome": "Final Liberation: Warhammer Epic 40,000",
     "Fontes": "GOG",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "First Class Trouble",
@@ -2242,7 +2242,7 @@ const gamesData = [
   {
     "Nome": "Genshin Impact",
     "Fontes": "Epic",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Ghost Master",
@@ -2257,7 +2257,7 @@ const gamesData = [
   {
     "Nome": "Ghost Pilots",
     "Fontes": "Amazon",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Ghost Song",
@@ -2267,7 +2267,7 @@ const gamesData = [
   {
     "Nome": "Ghostbusters Remastered",
     "Fontes": "Epic",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Ghostbusters: Spirits Unleashed Ecto Edition",
@@ -2697,7 +2697,7 @@ const gamesData = [
   {
     "Nome": "Hood Outlaws and Legends",
     "Fontes": "Epic",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Horace",
@@ -2922,7 +2922,7 @@ const gamesData = [
   {
     "Nome": "Jill of the Jungle",
     "Fontes": "GOG",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Jitsu Squad",
@@ -3032,7 +3032,7 @@ const gamesData = [
   {
     "Nome": "KID A MNESIA EXHIBITION",
     "Fontes": "Epic",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "KILL KNIGHT",
@@ -3057,7 +3057,7 @@ const gamesData = [
   {
     "Nome": "King of the Monsters 2",
     "Fontes": "Amazon",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Kingdom Come Deliverance",
@@ -3327,7 +3327,7 @@ const gamesData = [
   {
     "Nome": "Lure of the Temptress (1992)",
     "Fontes": "GOG",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Lysfanga: The Time Shift Warrior",
@@ -3342,7 +3342,7 @@ const gamesData = [
   {
     "Nome": "Madden NFL 22",
     "Fontes": "EA app",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Mafia",
@@ -3377,7 +3377,7 @@ const gamesData = [
   {
     "Nome": "Magician Lord",
     "Fontes": "Amazon",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Magrunner: Dark Pulse",
@@ -3492,7 +3492,7 @@ const gamesData = [
   {
     "Nome": "Metal Slug 4",
     "Fontes": "Amazon",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Metal Slug X",
@@ -3677,7 +3677,7 @@ const gamesData = [
   {
     "Nome": "Mutation Nation",
     "Fontes": "Amazon",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Mutazione",
@@ -3737,7 +3737,7 @@ const gamesData = [
   {
     "Nome": "NBA 2K21",
     "Fontes": "Epic",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "NBA 2K25",
@@ -3787,7 +3787,7 @@ const gamesData = [
   {
     "Nome": "Neverwinter Nights Diamond",
     "Fontes": "GOG",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Neverwinter Nights: Enhanced Edition",
@@ -3837,12 +3837,12 @@ const gamesData = [
   {
     "Nome": "Ninja Commando",
     "Fontes": "Amazon",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Ninja Master's",
     "Fontes": "Amazon",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Nioh",
@@ -4277,7 +4277,7 @@ const gamesData = [
   {
     "Nome": "Rabbids Coding!",
     "Fontes": "Ubisoft Connect",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "RAGE 2",
@@ -4457,7 +4457,7 @@ const gamesData = [
   {
     "Nome": "Robo Army",
     "Fontes": "Amazon",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Rocket Bot Royale",
@@ -4467,7 +4467,7 @@ const gamesData = [
   {
     "Nome": "Rocket League",
     "Fontes": "Epic",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Rogue Company",
@@ -4492,7 +4492,7 @@ const gamesData = [
   {
     "Nome": "RollerCoaster Tycoon 3: Complete Edition",
     "Fontes": "Epic",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "RPG in a Box",
@@ -4592,12 +4592,12 @@ const gamesData = [
   {
     "Nome": "Samurai Shodown II",
     "Fontes": "Amazon",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Samurai Shodown IV: Amakusa's Revenge",
     "Fontes": "Amazon",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "SAMURAI SHODOWN NEOGEO COLLECTION",
@@ -4647,7 +4647,7 @@ const gamesData = [
   {
     "Nome": "Second Extinction",
     "Fontes": "Epic",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Secret Files 3",
@@ -4682,7 +4682,7 @@ const gamesData = [
   {
     "Nome": "Sengoku 2",
     "Fontes": "Amazon",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Serial Cleaner",
@@ -4717,7 +4717,7 @@ const gamesData = [
   {
     "Nome": "Shadow Warrior Classic Complete",
     "Fontes": "GOG",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Shadowrun Hong Kong",
@@ -4942,7 +4942,7 @@ const gamesData = [
   {
     "Nome": "Soccer Brawl",
     "Fontes": "Amazon",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Solitairica",
@@ -5182,7 +5182,7 @@ const gamesData = [
   {
     "Nome": "StarCraft Remastered",
     "Fontes": "Battle.net",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Stardew Valley",
@@ -5257,7 +5257,7 @@ const gamesData = [
   {
     "Nome": "Stranger Things 3: The Game",
     "Fontes": "Epic",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Stray Gods: The Roleplaying Musical",
@@ -5402,7 +5402,7 @@ const gamesData = [
   {
     "Nome": "Super Sidekicks",
     "Fontes": "Amazon",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Super Space Club",
@@ -5462,17 +5462,17 @@ const gamesData = [
   {
     "Nome": "Symphonia (Student Project, 2020)",
     "Fontes": "GOG",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Syndicate Plus",
     "Fontes": "GOG",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Syndicate Wars",
     "Fontes": "GOG",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Tacoma",
@@ -5522,7 +5522,7 @@ const gamesData = [
   {
     "Nome": "Teenagent",
     "Fontes": "GOG",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Tell Me Why",
@@ -5797,7 +5797,7 @@ const gamesData = [
   {
     "Nome": "The King Of Fighters 2000",
     "Fontes": "Amazon",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "The King Of Fighters 2002",
@@ -5807,7 +5807,7 @@ const gamesData = [
   {
     "Nome": "The King of Fighters 2003",
     "Fontes": "Amazon",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "The Last Blade",
@@ -5872,7 +5872,7 @@ const gamesData = [
   {
     "Nome": "The Lords of Midnight",
     "Fontes": "GOG",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "The Lullaby of Life",
@@ -5942,7 +5942,7 @@ const gamesData = [
   {
     "Nome": "The Super Spy",
     "Fontes": "Amazon",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "The Talos Principle: Gold Edition",
@@ -6067,7 +6067,7 @@ const gamesData = [
   {
     "Nome": "Thief 3: Deadly Shadows",
     "Fontes": "GOG",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "THIEF: Definitive Edition",
@@ -6227,12 +6227,12 @@ const gamesData = [
   {
     "Nome": "Tormentor X Punisher",
     "Fontes": "Epic",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Total Overdose: A Gunslinger's Tale in Mexico",
     "Fontes": "GOG",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Total War: SHOGUN 2",
@@ -6277,7 +6277,7 @@ const gamesData = [
   {
     "Nome": "Towerfall Ascension",
     "Fontes": "Epic",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Town of Salem 2",
@@ -6387,17 +6387,17 @@ const gamesData = [
   {
     "Nome": "Tyrian 2000",
     "Fontes": "GOG",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Ultima  Underworld I",
     "Fontes": "GOG",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Ultima  Underworld II",
     "Fontes": "GOG",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Ultima IV: Quest of the Avatar",
@@ -6407,7 +6407,7 @@ const gamesData = [
   {
     "Nome": "Ultima Worlds of Adventure 2: Martian Dreams",
     "Fontes": "GOG",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Ultimate Zombie Defense",
@@ -6442,7 +6442,7 @@ const gamesData = [
   {
     "Nome": "Unreal Tournament",
     "Fontes": "Epic",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Urbek City Builder Prologue",
@@ -6682,7 +6682,7 @@ const gamesData = [
   {
     "Nome": "Wild Card Football",
     "Fontes": "Epic",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Wild Country",
@@ -6747,12 +6747,12 @@ const gamesData = [
   {
     "Nome": "Worlds of Ultima: The Savage Empire",
     "Fontes": "GOG",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Worms Revolution Gold Edition",
     "Fontes": "GOG",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "WRC 7 FIA World Rally Championship",
@@ -6782,7 +6782,7 @@ const gamesData = [
   {
     "Nome": "X-Morph: Defense Complete Edition",
     "Fontes": "GOG",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "YAIBA: NINJA GAIDEN Z",
@@ -6857,7 +6857,7 @@ const gamesData = [
   {
     "Nome": "Zak McKracken and the Alien Mindbenders",
     "Fontes": "Amazon",
-    "Id do jogo": null
+    "Id do jogo": "null"
   },
   {
     "Nome": "Zero Hour",

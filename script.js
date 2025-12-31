@@ -4,10 +4,10 @@ const SGDB_API_KEY = "c1c6a611af8537dfde7babca64617fa4";
 const sgdbCache = {}; 
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Cruza os dados (Sobrescrevendo o games_data)
+    // 1. Limpa e Sincroniza os IDs
     mergeGameData();
     
-    // 2. Renderiza
+    // 2. Renderiza a tela
     renderLibrary();
     
     document.getElementById('searchInput').addEventListener('input', (e) => {
@@ -16,32 +16,36 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /**
- * FUNDE OS ARQUIVOS: Ignora o ID original e usa apenas o do ids.js
+ * 1. Limpa qualquer lixo no 'Id do jogo'
+ * 2. Injeta o valor exato do ids.js
  */
 function mergeGameData() {
     if (typeof idsData === 'undefined' || typeof gamesData === 'undefined') {
-        console.error("ERRO: Verifique se 'ids.js' e 'games_data.js' estão carregados.");
+        console.error("ERRO: Certifique-se de que ids.js e games_data.js foram carregados antes do script.js");
         return;
     }
 
-    // Mapeia os IDs novos pelo nome
+    // Cria mapa de referência: Nome -> SteamID (do arquivo ids.js)
     const idsMap = {};
     idsData.forEach(item => {
         if (item.Nome) {
-            // Lê a chave "Id do jogo" conforme você renomeou no arquivo ids.js
-            idsMap[item.Nome.trim()] = item['Id do jogo'];
+            idsMap[item.Nome.trim()] = item.SteamID;
         }
     });
 
-    // Percorre a lista principal e SOBRESCREVE o ID
+    // Processa a lista principal
     gamesData.forEach(game => {
-        const nomeLimpo = game.Nome.trim();
-        const idDoArquivoIds = idsMap[nomeLimpo];
+        // PASSO 1: Apaga qualquer valor existente (string, link, lixo)
+        game['Id do jogo'] = null;
 
-        // Regra de Ouro: O ID do jogo passa a ser ESTRITAMENTE o que veio do ids.js
-        // Se não tiver no ids.js, vira undefined (e o código vai buscar no SGDB depois)
-        game['Id do jogo'] = idDoArquivoIds;
+        // PASSO 2: Substitui pelo valor do ids.js (se existir correspondência de nome)
+        const nomeLimpo = game.Nome.trim();
+        if (idsMap.hasOwnProperty(nomeLimpo)) {
+            game['Id do jogo'] = idsMap[nomeLimpo];
+        }
     });
+    
+    console.log("IDs sincronizados e limpos.");
 }
 
 function renderLibrary(filter = "") {
@@ -50,6 +54,7 @@ function renderLibrary(filter = "") {
 
     const storeOrder = ["Steam", "Steam Family Sharing", "Epic", "Epic Games", "EA App", "Ubisoft Connect", "GOG", "Battle.net", "Amazon Games", "Amazon", "RobotCache"];
 
+    // Agrupa e Ordena
     const grouped = gamesData.reduce((acc, game) => {
         const store = (game.Fontes || "Outros").trim();
         if (!acc[store]) acc[store] = [];
@@ -79,14 +84,15 @@ function renderLibrary(filter = "") {
             </button>
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
                 ${gamesInStore.map(game => {
-                    // Pega o ID que foi forçado pela função mergeGameData
+                    // Pega o ID limpo
                     const finalId = game['Id do jogo'];
                     
-                    // Verifica se é válido (Steam usa números)
-                    const hasValidId = finalId && !isNaN(finalId) && String(finalId).length < 15;
+                    // Verifica se é um SteamID válido (número)
+                    // Se for "null", null, ou string não numérica, é considerado inválido (vai pro SGDB)
+                    const isSteamId = finalId && finalId !== "null" && !isNaN(finalId);
                     
-                    // Se tem ID, usa link direto da Steam. Se não, busca no SGDB.
-                    const coverUrl = hasValidId 
+                    // Link direto da Steam ou Vazio
+                    const coverUrl = isSteamId 
                         ? `https://cdn.akamai.steamstatic.com/steam/apps/${finalId}/library_600x900_2x.jpg` 
                         : '';
                     
@@ -96,7 +102,7 @@ function renderLibrary(filter = "") {
                     <div class="game-card cursor-pointer hover:scale-105 transition transform rounded-xl overflow-hidden shadow-2xl aspect-[2/3] relative group bg-[#1e293b] border border-gray-800" 
                          onclick="openDetails('${safeName}')"
                          data-name="${game.Nome}"
-                         data-has-id="${hasValidId}">
+                         data-is-steam="${isSteamId}">
                         
                         <div class="absolute inset-0 flex items-center justify-center p-4 text-center z-0">
                             <span class="text-gray-600 font-bold uppercase text-[10px] tracking-tighter">${game.Nome}</span>
@@ -116,11 +122,10 @@ function renderLibrary(filter = "") {
     startImageObserver();
 }
 
-// --- FUNÇÕES AUXILIARES (Limpeza e Busca SGDB) ---
+// --- FALLBACK (SGDB para quem é null) ---
 
 function cleanGameName(name) {
     if (!name) return "";
-    // Corta no primeiro símbolo para limpar subtítulos (Ex: "Nome: Subtitulo" -> "Nome")
     return name.split(/[:\-_(]/)[0].trim();
 }
 
@@ -128,9 +133,8 @@ async function fetchSGDBImage(gameName) {
     if (sgdbCache[gameName]) return sgdbCache[gameName];
     try {
         const simpleName = cleanGameName(gameName);
-        console.log(`Buscando SGDB: ${simpleName}`);
+        console.log(`Buscando SGDB para: ${simpleName}`);
         
-        // 1. Pesquisa ID no SGDB
         const searchRes = await fetch(`${CORS_PROXY}https://www.steamgriddb.com/api/v2/search/by/name/${encodeURIComponent(simpleName)}`, {
             headers: { 'Authorization': `Bearer ${SGDB_API_KEY}` }
         });
@@ -138,16 +142,13 @@ async function fetchSGDBImage(gameName) {
         if (searchRes.ok) {
             const searchData = await searchRes.json();
             if (searchData.success && searchData.data.length > 0) {
-                const gameId = searchData.data[0].id; // Pega o primeiro jogo encontrado
-
-                // 2. Com o ID, busca a Capa (Grid)
+                const gameId = searchData.data[0].id;
                 const gridRes = await fetch(`${CORS_PROXY}https://www.steamgriddb.com/api/v2/grids/game/${gameId}?dimensions=600x900`, {
                     headers: { 'Authorization': `Bearer ${SGDB_API_KEY}` }
                 });
                 
                 if (gridRes.ok) {
                     const gridData = await gridRes.json();
-                    // Pega a primeira imagem disponível (mesmo que não seja perfeita)
                     if (gridData.success && gridData.data.length > 0) {
                         const url = gridData.data[0].url;
                         sgdbCache[gameName] = url;
@@ -167,10 +168,10 @@ function startImageObserver() {
                 const card = entry.target;
                 const img = card.querySelector('.game-img');
                 const gameName = card.getAttribute('data-name');
-                const hasId = card.getAttribute('data-has-id') === 'true';
+                const isSteam = card.getAttribute('data-is-steam') === 'true';
 
-                // Só busca no SGDB se NÃO tiver ID do arquivo ids.js
-                if (!hasId && img.classList.contains('opacity-0')) {
+                // Se NÃO é Steam (ou seja, ID era null ou inválido), busca no SGDB
+                if (!isSteam && img.classList.contains('opacity-0')) {
                     setTimeout(async () => {
                         const newUrl = await fetchSGDBImage(gameName);
                         if (newUrl) {
@@ -179,8 +180,8 @@ function startImageObserver() {
                         }
                     }, index * 100);
                 } 
-                else if (hasId) {
-                    // Se tem ID, apenas garante o fade-in
+                // Se É Steam, apenas garante o fade-in
+                else if (isSteam) {
                     img.onload = () => img.classList.replace('opacity-0', 'opacity-100');
                     if (img.complete) img.classList.replace('opacity-0', 'opacity-100');
                 }
@@ -199,12 +200,13 @@ function openDetails(gameName) {
 
     const modal = document.getElementById('gameModal');
     const content = document.getElementById('modalContent');
+    const steamId = game['Id do jogo']; // Já sincronizado
     
-    // Pega o ID que foi injetado pelo ids.js
-    const steamId = game['Id do jogo'];
-    
+    // Links
     const pcWikiLink = `https://www.pcgamingwiki.com/wiki/${game.Nome.replace(/ /g, '_')}#System_requirements`;
-    const steamStoreLink = steamId ? `https://store.steampowered.com/app/${steamId}` : `https://store.steampowered.com/search/?term=${encodeURIComponent(game.Nome)}`;
+    // Se ID for válido, link app, senão busca
+    const isSteamId = steamId && !isNaN(steamId);
+    const steamStoreLink = isSteamId ? `https://store.steampowered.com/app/${steamId}` : `https://store.steampowered.com/search/?term=${encodeURIComponent(game.Nome)}`;
 
     content.innerHTML = `
         <div class="sticky top-0 z-50 bg-[#0f1219]/95 backdrop-blur-md px-8 py-6 border-b border-gray-800 flex justify-between items-start shrink-0 shadow-lg">
@@ -234,10 +236,10 @@ function openDetails(gameName) {
                     <div class="flex flex-wrap gap-4 pt-4">
                         <a title="YouTube Trailer" href="https://www.youtube.com/results?search_query=${encodeURIComponent(game.Nome)}+trailer" target="_blank" class="btn-icon bg-[#FF0000]"><i class="fab fa-youtube"></i></a>
                         <a title="Steam Store" href="${steamStoreLink}" target="_blank" class="btn-icon bg-[#171a21]"><i class="fab fa-steam"></i></a>
-                        ${steamId ? `<a title="SteamDB" href="https://steamdb.info/app/${steamId}/" target="_blank" class="btn-icon bg-[#1b2838]"><i class="fas fa-chart-line"></i></a>` : ''}
-                        ${steamId ? `<a title="ProtonDB" href="https://www.protondb.com/app/${steamId}" target="_blank" class="btn-icon bg-[#212121]"><i class="fab fa-linux"></i></a>` : ''}
+                        ${isSteamId ? `<a title="SteamDB" href="https://steamdb.info/app/${steamId}/" target="_blank" class="btn-icon bg-[#1b2838]"><i class="fas fa-chart-line"></i></a>` : ''}
+                        ${isSteamId ? `<a title="ProtonDB" href="https://www.protondb.com/app/${steamId}" target="_blank" class="btn-icon bg-[#212121]"><i class="fab fa-linux"></i></a>` : ''}
                         <a title="Co-optimus" href="https://www.co-optimus.com/search.php?q=${encodeURIComponent(game.Nome)}" target="_blank" class="btn-icon bg-[#005596]"><i class="fas fa-users"></i></a>
-                        <a title="HowLongToBeat" href="https://howlongtobeat.com/?q=${encodeURIComponent(game.Nome)}" target="_blank" class="btn-icon bg-[#212121]"><i class="fas fa-clock"></i></a>
+                        <a title="HowLongToBeat" href="https://howlongtobeat.com/?q=${encodeURIComponent(game.Nome)}" target="_blank" class="btn-icon bg-[#E64A19]"><i class="fas fa-clock"></i></a>
                         <a title="Nexus Mods" href="https://www.nexusmods.com/search/?gsearch=${encodeURIComponent(game.Nome)}" target="_blank" class="btn-icon bg-[#da8100]"><i class="fas fa-puzzle-piece"></i></a>
                         <a title="GG Deals" href="https://gg.deals/games/?title=${encodeURIComponent(game.Nome)}" target="_blank" class="btn-icon bg-[#004a00]"><i class="fas fa-tag"></i></a>
                     </div>
