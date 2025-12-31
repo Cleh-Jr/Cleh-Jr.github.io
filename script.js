@@ -9,11 +9,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// --- BUSCA DE ID (Para jogos sem imagem) ---
+// --- BUSCA DE ID (Robustez contra nomes complexos) ---
 async function fetchSteamId(gameName) {
     if (steamIdCache[gameName]) return steamIdCache[gameName];
 
-    // Limpeza pesada do nome para garantir melhor busca
+    // Limpeza pesada para garantir que encontre a imagem
     let cleanName = gameName
         .replace(/Game of the Year Edition|GOTY|Definitive Edition|Director's Cut|Gold Edition|Special Edition|Ultimate Edition|Complete Edition|Deluxe Edition/gi, '')
         .replace(/\(.*\)|\[.*\]/g, '')
@@ -22,7 +22,8 @@ async function fetchSteamId(gameName) {
         .trim();
 
     try {
-        const searchUrl = `${CORS_PROXY}https://store.steampowered.com/api/storesearch/?term=${encodeURIComponent(cleanName)}&l=brazilian&cc=BR`;
+        const cleanURI = encodeURIComponent(cleanName);
+        const searchUrl = `${CORS_PROXY}https://store.steampowered.com/api/storesearch/?term=${cleanURI}&l=brazilian&cc=BR`;
         const response = await fetch(searchUrl);
         const data = await response.json();
         
@@ -31,27 +32,19 @@ async function fetchSteamId(gameName) {
             return data.items[0].id;
         }
     } catch (e) {
-        console.error("Erro busca Steam:", cleanName);
+        console.error("Erro busca ID:", cleanName);
     }
     return null;
 }
 
-// --- RENDERIZAÇÃO DA BIBLIOTECA (Lógica Restaurada) ---
+// --- RENDERIZAÇÃO DA BIBLIOTECA (Ordenação Correta) ---
 function renderLibrary(filter = "") {
     const container = document.getElementById('libraryContainer');
     container.innerHTML = '';
 
-    // Ordem exata solicitada anteriormente
     const storeOrder = [
-        "Steam", 
-        "Steam Family Sharing", 
-        "Epic Games", 
-        "EA App", 
-        "Ubisoft Connect", 
-        "GOG", 
-        "Battle.net", 
-        "Amazon Games", 
-        "RobotCache"
+        "Steam", "Steam Family Sharing", "Epic Games", "EA App", 
+        "Ubisoft Connect", "GOG", "Battle.net", "Amazon Games", "RobotCache"
     ];
 
     const grouped = gamesData.reduce((acc, game) => {
@@ -83,7 +76,6 @@ function renderLibrary(filter = "") {
             </button>
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
                 ${gamesInStore.map(game => {
-                    // Lógica Mista: Usa ID se tiver, senão prepara para buscar
                     const sId = game['Id do jogo'];
                     const isSteamId = sId && !isNaN(sId) && String(sId).length < 12;
                     const coverUrl = isSteamId 
@@ -114,7 +106,7 @@ function renderLibrary(filter = "") {
     startImageObserver();
 }
 
-// --- OBSERVADOR (Para carregar imagens que faltam ID) ---
+// --- OBSERVADOR DE IMAGENS ---
 function startImageObserver() {
     const observer = new IntersectionObserver((entries) => {
         entries.forEach((entry, index) => {
@@ -124,35 +116,34 @@ function startImageObserver() {
                 const gameName = card.getAttribute('data-name');
                 const existingId = card.getAttribute('data-id');
 
-                // Só busca se NÃO tiver ID e a imagem estiver invisível
+                // Só busca se NÃO tiver ID e a imagem estiver oculta
                 if (!existingId && img.classList.contains('opacity-0')) {
                     setTimeout(async () => {
                         const newId = await fetchSteamId(gameName);
                         if (newId) {
-                            card.setAttribute('data-id', newId); // Salva para o modal usar depois
+                            card.setAttribute('data-id', newId);
                             img.src = `https://cdn.akamai.steamstatic.com/steam/apps/${newId}/library_600x900_2x.jpg`;
                             img.onload = () => img.classList.replace('opacity-0', 'opacity-100');
                         }
-                    }, index * 100); // Delay pequeno para não travar
+                    }, index * 150);
                 }
                 observer.unobserve(card);
             }
         });
-    }, { rootMargin: "200px" });
+    }, { rootMargin: "300px" });
 
     document.querySelectorAll('.game-card').forEach(card => observer.observe(card));
 }
 
-// --- MODAL DE DETALHES (Novo Layout Sem Banner) ---
+// --- MODAL (Layout Perfeito: Sem Banner + Cabeçalho Flutuante) ---
 async function openDetails(gameId) {
     const game = gamesData.find(g => g.Id === gameId);
     if (!game) return;
 
-    // Tenta pegar o ID que pode ter sido descoberto pelo observador
+    // Recupera o ID descoberto pelo observador (se houver)
     const cardElement = document.querySelector(`.game-card[onclick="openDetails('${game.Id}')"]`);
     let sId = cardElement ? cardElement.getAttribute('data-id') : null;
 
-    // Se ainda não tiver ID, busca agora rapidinho
     if (!sId) sId = await fetchSteamId(game.Nome);
 
     const modal = document.getElementById('gameModal');
@@ -160,7 +151,7 @@ async function openDetails(gameId) {
     const pcWikiLink = `https://www.pcgamingwiki.com/wiki/${game.Nome.replace(/ /g, '_')}#System_requirements`;
 
     content.innerHTML = `
-        <div class="sticky top-0 z-50 bg-[#0f1219]/95 backdrop-blur-md px-8 py-6 border-b border-gray-800 flex justify-between items-start shrink-0">
+        <div class="sticky top-0 z-50 bg-[#0f1219]/95 backdrop-blur-md px-8 py-6 border-b border-gray-800 flex justify-between items-start shrink-0 shadow-lg">
             <div>
                 <h2 class="text-4xl md:text-6xl font-black uppercase italic tracking-tighter text-white leading-none">
                     ${game.Nome}
