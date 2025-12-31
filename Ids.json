@@ -1,4 +1,4 @@
-[
+const gamesData = [
   {
     "Nome": "[REDACTED]",
     "Fontes": "Epic",
