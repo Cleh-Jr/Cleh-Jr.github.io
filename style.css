@@ -1,43 +1,67 @@
+/* Configuração Geral */
 body {
     background-color: #0b0e14;
-    color: #e2e8f0;
     overflow-x: hidden;
 }
 
-/* Scrollbar */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: #0b0e14; }
-::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 10px; }
-
-/* Modal Blur */
-.modal-overlay {
-    background: rgba(0, 0, 0, 0.95);
-    backdrop-filter: blur(20px);
+/* Scrollbar Bonita (Estilo Chrome/Edge) */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #0b0e14;
+}
+::-webkit-scrollbar-thumb {
+    background: #1e293b;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #3b82f6;
 }
 
-/* Padronização dos Botões Externos */
+/* Modal Overlay com Blur */
+.modal-overlay {
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+}
+.modal-overlay:not(.hidden) {
+    opacity: 1;
+}
+
+/* Scroll dentro do Modal */
+#modalContent {
+    isolation: isolate; /* Garante que o sticky funcione bem */
+}
+.modal-body-scroll {
+    overflow-y: auto;
+    height: 100%;
+}
+.modal-body-scroll::-webkit-scrollbar-track {
+    background: #0f1219;
+}
+
+/* Botões de Links Externos */
 .btn-icon {
-    width: 3.5rem;
-    height: 3.5rem;
+    width: 3rem;
+    height: 3rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 1.2rem;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 0.75rem;
     color: white !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
-
 .btn-icon:hover {
-    transform: translateY(-5px) scale(1.05);
+    transform: translateY(-3px);
     filter: brightness(1.2);
 }
-
 .btn-icon i {
-    font-size: 1.25rem;
+    font-size: 1.2rem;
 }
 
-/* Estilo do Placeholder de Capa */
-.placeholder-card {
-    background-color: #1e293b;
-    border: 1px solid #334155;
+/* Efeito nos Cards */
+.game-card:hover {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.15);
 }
