@@ -1,51 +1,48 @@
-// Configuração da API e Proxy
+// Configuração
 const CORS_PROXY = "https://corsproxy.io/?";
 const SGDB_API_KEY = "c1c6a611af8537dfde7babca64617fa4"; 
 const sgdbCache = {}; 
 
-document.addEventListener('DOMContentLoaded', async () => {
-    // 1. Primeiro: Sincroniza os arquivos
-    await mergeGameIds();
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Fundir os dados do games_data.js com o ids.js
+    mergeGameIds();
     
-    // 2. Depois: Renderiza a biblioteca
+    // 2. Renderizar
     renderLibrary();
     
-    // Busca dinâmica
     document.getElementById('searchInput').addEventListener('input', (e) => {
         renderLibrary(e.target.value);
     });
 });
 
 /**
- * NOVA FUNÇÃO: Lê o arquivo Ids.json e funde com o games_data.js
+ * Funde os IDs do arquivo ids.js dentro da lista principal gamesData
  */
-async function mergeGameIds() {
-    try {
-        const response = await fetch('Ids.json'); // Busca o arquivo separado
-        const idsList = await response.json();
-        
-        // Cria um mapa para busca rápida: { "Nome do Jogo": 12345 }
-        const idsMap = {};
-        idsList.forEach(item => {
-            idsMap[item.Nome] = item.SteamID;
-        });
-
-        // Percorre os dados principais e injeta o SteamID correspondente
-        gamesData.forEach(game => {
-            if (idsMap[game.Nome] !== undefined) {
-                game.SteamID = idsMap[game.Nome];
-            }
-        });
-        console.log("Fusão de dados concluída com sucesso!");
-    } catch (error) {
-        console.error("Erro ao ler Ids.json. (Se estiver local, use o Live Server)", error);
+function mergeGameIds() {
+    if (typeof idsData === 'undefined') {
+        console.error("ERRO: O arquivo ids.js não foi carregado corretamente.");
+        return;
     }
+
+    // Cria um mapa rápido para conectar Nome -> SteamID
+    const idsMap = {};
+    idsData.forEach(item => {
+        idsMap[item.Nome] = item.SteamID;
+    });
+
+    // Injeta o ID no objeto do jogo principal
+    gamesData.forEach(game => {
+        if (idsMap[game.Nome] !== undefined) {
+            game.SteamID = idsMap[game.Nome];
+        }
+    });
 }
 
-// --- FUNÇÕES DE LIMPEZA E IMAGEM (Mantidas Iguais) ---
+// --- FUNÇÕES DE IMAGEM ---
 
 function cleanGameName(name) {
     if (!name) return "";
+    // Corta no primeiro símbolo para limpar subtítulos
     return name.split(/[:\-_(]/)[0].trim();
 }
 
@@ -54,33 +51,41 @@ async function fetchSGDBImage(gameName) {
 
     try {
         const simpleName = cleanGameName(gameName);
+        
+        // 1. Busca ID no SGDB
         const searchUrl = `${CORS_PROXY}https://www.steamgriddb.com/api/v2/search/by/name/${encodeURIComponent(simpleName)}`;
         const searchRes = await fetch(searchUrl, {
             headers: { 'Authorization': `Bearer ${SGDB_API_KEY}` }
         });
         
-        if (!searchRes.ok) return null;
-        const searchData = await searchRes.json();
+        if (searchRes.ok) {
+            const searchData = await searchRes.json();
+            if (searchData.success && searchData.data.length > 0) {
+                const gameId = searchData.data[0].id;
 
-        if (searchData.success && searchData.data.length > 0) {
-            const gameId = searchData.data[0].id;
-            const gridUrl = `${CORS_PROXY}https://www.steamgriddb.com/api/v2/grids/game/${gameId}?dimensions=600x900`;
-            const gridRes = await fetch(gridUrl, {
-                headers: { 'Authorization': `Bearer ${SGDB_API_KEY}` }
-            });
-            const gridData = await gridRes.json();
-
-            if (gridData.success && gridData.data.length > 0) {
-                const imgUrl = gridData.data[0].url;
-                sgdbCache[gameName] = imgUrl;
-                return imgUrl;
+                // 2. Busca Capa Vertical
+                const gridUrl = `${CORS_PROXY}https://www.steamgriddb.com/api/v2/grids/game/${gameId}?dimensions=600x900`;
+                const gridRes = await fetch(gridUrl, {
+                    headers: { 'Authorization': `Bearer ${SGDB_API_KEY}` }
+                });
+                
+                if (gridRes.ok) {
+                    const gridData = await gridRes.json();
+                    if (gridData.success && gridData.data.length > 0) {
+                        const imgUrl = gridData.data[0].url;
+                        sgdbCache[gameName] = imgUrl;
+                        return imgUrl;
+                    }
+                }
             }
         }
-    } catch (e) { console.warn(`SGDB falhou para: ${gameName}`); }
+    } catch (e) {
+        console.warn(`SGDB falhou para: ${gameName}`, e);
+    }
     return null;
 }
 
-// --- RENDERIZAÇÃO (Mantida Igual) ---
+// --- RENDERIZAÇÃO ---
 
 function renderLibrary(filter = "") {
     const container = document.getElementById('libraryContainer');
@@ -121,10 +126,13 @@ function renderLibrary(filter = "") {
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
                 ${gamesInStore.map(game => {
                     const steamId = game.SteamID;
-                    const hasSteamId = steamId !== null && steamId !== undefined;
+                    const hasSteamId = steamId !== null && steamId !== undefined && steamId !== "null";
+                    
+                    // Se tem ID, link direto da Steam. Se não, vazio (Observer busca depois)
                     const coverUrl = hasSteamId 
                         ? `https://cdn.akamai.steamstatic.com/steam/apps/${steamId}/library_600x900_2x.jpg` 
                         : '';
+                    
                     const safeName = game.Nome.replace(/'/g, "\\'");
 
                     return `
@@ -132,9 +140,11 @@ function renderLibrary(filter = "") {
                          onclick="openDetails('${safeName}')"
                          data-name="${game.Nome}"
                          data-has-id="${hasSteamId}">
+                        
                         <div class="absolute inset-0 flex items-center justify-center p-4 text-center z-0">
                             <span class="text-gray-600 font-bold uppercase text-[10px] tracking-tighter">${game.Nome}</span>
                         </div>
+
                         <img src="${coverUrl}" 
                              class="game-img w-full h-full object-cover relative z-10 ${coverUrl ? 'opacity-100' : 'opacity-0'} transition-opacity duration-500" 
                              loading="lazy" 
@@ -158,6 +168,7 @@ function startImageObserver() {
                 const gameName = card.getAttribute('data-name');
                 const hasId = card.getAttribute('data-has-id') === 'true';
 
+                // Se NÃO tem ID e a imagem está oculta, busca no SGDB
                 if (!hasId && img.classList.contains('opacity-0')) {
                     setTimeout(async () => {
                         const newUrl = await fetchSGDBImage(gameName);
@@ -165,8 +176,14 @@ function startImageObserver() {
                             img.src = newUrl;
                             img.onload = () => img.classList.replace('opacity-0', 'opacity-100');
                         }
-                    }, index * 100);
+                    }, index * 150);
+                } 
+                // Se TEM ID (Steam), apenas garante que apareça (fade-in)
+                else if (hasId) {
+                    img.onload = () => img.classList.replace('opacity-0', 'opacity-100');
+                    if (img.complete) img.classList.replace('opacity-0', 'opacity-100');
                 }
+                
                 observer.unobserve(card);
             }
         });
@@ -175,6 +192,7 @@ function startImageObserver() {
     document.querySelectorAll('.game-card').forEach(card => observer.observe(card));
 }
 
+// Modal Perfeito (Layout Preservado)
 function openDetails(gameName) {
     const game = gamesData.find(g => g.Nome === gameName);
     if (!game) return;
@@ -183,7 +201,6 @@ function openDetails(gameName) {
     const content = document.getElementById('modalContent');
     const steamId = game.SteamID;
     
-    // Links baseados no nome ou ID
     const pcWikiLink = `https://www.pcgamingwiki.com/wiki/${game.Nome.replace(/ /g, '_')}#System_requirements`;
     const steamStoreLink = steamId ? `https://store.steampowered.com/app/${steamId}` : `https://store.steampowered.com/search/?term=${encodeURIComponent(game.Nome)}`;
 
@@ -191,7 +208,7 @@ function openDetails(gameName) {
         <div class="sticky top-0 z-50 bg-[#0f1219]/95 backdrop-blur-md px-8 py-6 border-b border-gray-800 flex justify-between items-start shrink-0 shadow-lg">
             <div>
                 <h2 class="text-3xl md:text-5xl font-black uppercase italic tracking-tighter text-white leading-none">${game.Nome}</h2>
-                <p class="text-blue-500 font-bold mt-2 uppercase text-xs tracking-[0.3em]">${game.Fontes || 'Outros'}</p>
+                <p class="text-blue-500 font-bold mt-2 uppercase text-xs tracking-[0.3em]">${game.Fontes}</p>
             </div>
             <button onclick="closeModal()" class="w-12 h-12 rounded-full bg-gray-800 hover:bg-red-500 hover:text-white text-gray-400 transition flex items-center justify-center shrink-0 ml-4">
                 <i class="fas fa-times text-xl"></i>
@@ -232,7 +249,7 @@ function openDetails(gameName) {
                     </div>
 
                     <div class="flex flex-wrap gap-4 pt-4">
-                        <a title="YouTube" href="https://www.youtube.com/results?search_query=${encodeURIComponent(game.Nome)}+trailer" target="_blank" class="btn-icon bg-[#FF0000]"><i class="fab fa-youtube"></i></a>
+                        <a title="YouTube Trailer" href="https://www.youtube.com/results?search_query=${encodeURIComponent(game.Nome)}+trailer" target="_blank" class="btn-icon bg-[#FF0000]"><i class="fab fa-youtube"></i></a>
                         <a title="Steam Store" href="${steamStoreLink}" target="_blank" class="btn-icon bg-[#171a21]"><i class="fab fa-steam"></i></a>
                         
                         ${steamId ? `<a title="SteamDB" href="https://steamdb.info/app/${steamId}/" target="_blank" class="btn-icon bg-[#1b2838]"><i class="fas fa-chart-line"></i></a>` : ''}
